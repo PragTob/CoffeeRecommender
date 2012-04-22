@@ -1,0 +1,11 @@
+{
+  "name" : "CoffeeRecommender"
+, "version" : "0.0.1"
+, "description" : "A recommendation engine written in CoffeeScript"
+, "repository" : { "type" : "git"
+                    , "url" : "https://github.com/PragTob/CoffeeRecommender"
+                    }
+, "licenses" : ["MIT"]
+, "dependencies" : { "coffee-script" : ">=1.3.1"
+                   , "jasmine-node"  : ">=1.0.25"}
+}
