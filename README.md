@@ -1,4 +1,4 @@
-CoffeeRecommender
+## CoffeeRecommender [![Build Status](https://secure.travis-ci.org/PragTob/CoffeeRecommender.png?branch=master)](http://travis-ci.org/PragTob/CoffeeRecommender)
 =================
 
 A recommendation engine written in CoffeeScript and NodeJS.
