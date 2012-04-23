@@ -6,6 +6,7 @@
                     , "url" : "https://github.com/PragTob/CoffeeRecommender"
                     }
 , "licenses" : ["MIT"]
+, "scripts": { "test": "jasmine-node --coffee ." }
 , "dependencies" : { "coffee-script" : ">=1.3.1"
                    , "jasmine-node"  : ">=1.0.25"}
 }
