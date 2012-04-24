@@ -1,5 +1,7 @@
 class Server
 
+  @recommendables = []
+  
   http = require 'http'
 
   # helper function that responds to the client
@@ -10,35 +12,37 @@ class Server
       res.write data
       res.end()
 
-  @setup: ->
-    @server = http.createServer (request, response) ->
+  @setup: =>
+    @server = http.createServer (request, response) =>
       console.log "Request: #{request.method} #{request.url}"
-      data = Server.testJSON()
+      data = @testJSON()
       request.on 'data', (chunk) -> data += chunk
-      request.on 'end', () ->
+      request.on 'end', () =>
         console.log "Data: #{data}"
         requestObject = JSON.parse(decodeURIComponent(data.trim()))
         console.log requestObject
         switch requestObject.msg
           when 'feedback'
-            Server.processFeedback(requestObject)
+            @processFeedback(requestObject)
           when 'impression'
-            Server.processImpression(requestObject)
+            @processImpression(requestObject)
           when 'error'
-            Server.processError(requestObject)
+            @processError(requestObject)
           else
             console.log 'lol?'
-        Server.respond response, 200, 'text/plain', 'Hi'
+        @respond response, 200, 'text/plain', 'Hi'
 
 
-  @processFeedback: (requestObject) ->    console.log 'Got feedback'
+  @processFeedback: (requestObject) ->
+    console.log 'Got feedback'
 
   @processImpression: (requestObject) ->
-    Server.saveItem(requestObject.item) if requestObject.item.recommendable
-    Server.makeRecommendation(requestObject) if requestObject.config.recommend
+    @saveItem(requestObject.item) if requestObject.item.recommendable
+    @makeRecommendation(requestObject) if requestObject.config.recommend
 
   @saveItem: (item) ->
     console.log 'Save the item'
+    @recommendables.push item
 
   @makeRecommendation: (requestObject) ->
     console.log "Let's recommend something"
