@@ -41,8 +41,9 @@ class Server
     @makeRecommendation(requestObject) if requestObject.config.recommend
 
   @saveItem: (item) ->
-    console.log 'Save the item'
+    console.log 'Save the item. Recommendable items now are:'
     @recommendables.push item
+    console.log @recommendables
 
   @makeRecommendation: (requestObject) ->
     console.log "Let's recommend something"
