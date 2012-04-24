@@ -11,7 +11,7 @@ respond = (res, code, contentType, data) ->
 startServer = () ->
   server = http.createServer (request, response) ->
     console.log "Request: #{request.method} #{request.url}"
-    data = '{}'
+    data = testJSON()
     request.on 'data', (chunk) -> data += chunk
     request.on 'end', () ->
       console.log "Data: #{data}"
@@ -45,3 +45,40 @@ makeRecommendation = (requestObject) ->
 
 processError = (requestObject) ->
   console.log 'Just received an error'
+
+testJSON = () ->
+  '{
+    "msg":"impression",
+    "id":2,
+    "client":{
+      "id":1
+    },
+    "domain":{
+    	"id":2
+    },
+    "item":{
+    	"id":5,
+    	"title":"muuh",
+    	"url":"google.de",
+    	"created":42,
+    	"text":"a cow",
+    	"img":"google.de/images.jpg",
+    	"recommendable":true
+    },
+    "context":{
+    	"category":{
+    		"id":77
+    	}
+    },
+    "config":{
+    	"team":{
+    		"id":2
+    	},
+    	"timeout":200.0,
+    	"recommend":true,
+    	"limit":5
+    },
+    "version": "1.0"
+  }'
+
+startServer()
