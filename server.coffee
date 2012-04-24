@@ -1,26 +1,19 @@
 class Server
 
-  @recommendables = []
-  
-  http = require 'http'
+  set = require './Set'
+  @recommendables = set.createSet()
 
-  # helper function that responds to the client
-  @respond: (res, code, contentType, data) ->
-      res.writeHead code,
-          'Content-Type': contentType
-          'Content-Length': data.length
-      res.write data
-      res.end()
+  http = require 'http'
 
   @setup: =>
     @server = http.createServer (request, response) =>
-      console.log "Request: #{request.method} #{request.url}"
+      #console.log "Request: #{request.method} #{request.url}"
       data = @testJSON()
       request.on 'data', (chunk) -> data += chunk
       request.on 'end', () =>
-        console.log "Data: #{data}"
+       # console.log "Data: #{data}"
         requestObject = JSON.parse(decodeURIComponent(data.trim()))
-        console.log requestObject
+        #console.log requestObject
         switch requestObject.msg
           when 'feedback'
             @processFeedback(requestObject)
@@ -42,7 +35,7 @@ class Server
 
   @saveItem: (item) ->
     console.log 'Save the item. Recommendable items now are:'
-    @recommendables.push item
+    @recommendables.add item
     console.log @recommendables
 
   @makeRecommendation: (requestObject) ->
@@ -50,6 +43,14 @@ class Server
 
   @processError: (requestObject) ->
     console.log 'Just received an error'
+
+  # helper function that responds to the client
+  @respond: (res, code, contentType, data) ->
+      res.writeHead code,
+          'Content-Type': contentType
+          'Content-Length': data.length
+      res.write data
+      res.end()
 
   @start: ->
     @server.listen process.env.C9_PORT
