@@ -28,6 +28,10 @@ class Server
 
   @processFeedback: (requestObject) ->
     console.log 'Got feedback'
+    #TODO process feedback probably
+    content = 
+      code: 200
+      phrase: ''
 
   @processImpression: (requestObject) ->
     @saveItem(requestObject.item) if requestObject.item.recommendable
@@ -49,16 +53,19 @@ class Server
 
   @processError: (requestObject) ->
     console.log 'Just received an error'
+    content = 
+      code: 200
+      phrase: "received 'error' request: #{requestObject.code} (#{requestObject.error})"
 
   #TODO change to take res and value
   # helper function that responds to the client
   @respond: (res, content) ->
-      data = JSON.stringify content['data']
+      data = JSON.stringify (content['data'] ? {error: content['phrase'], code: content['code']})
       res.writeHead content['code'],
           'Content-Type': 'application/json'
           'Content-Length': data.length
       res.write data
-      console.log res
+      #console.log res
       res.end()
 
   @start: ->
