@@ -57,6 +57,12 @@ class Server
       code: 200
       phrase: "received 'error' request: #{requestObject.code} (#{requestObject.error})"
 
+  @processUnknown: (requestObject) ->
+    console.log 'We received a message we can\'t handle'
+    content =
+      code: 400
+      phrase: "we couldn't process the request message '#{requestObject.msg}'."
+
   #TODO change to take res and value
   # helper function that responds to the client
   @respond: (res, content) ->
