@@ -63,7 +63,6 @@ class Server
       code: 400
       phrase: "we couldn't process the request message '#{requestObject.msg}'."
 
-  #TODO change to take res and value
   # helper function that responds to the client
   @respond: (res, content) ->
       data = JSON.stringify(
