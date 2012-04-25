@@ -43,7 +43,7 @@ class Server
   @saveItem: (item) ->
     console.log 'Save the item. Recommendable items now are:'
     @recommendables.add item
-    console.log @recommendables
+    console.log @recommendables['hash']
 
   @makeRecommendation: (requestObject) ->
     console.log "Let's recommend something"
@@ -66,7 +66,11 @@ class Server
   #TODO change to take res and value
   # helper function that responds to the client
   @respond: (res, content) ->
-      data = JSON.stringify (content['data'] ? {error: content['phrase'], code: content['code']})
+      data = JSON.stringify(
+        content['data'] ? 
+        {error: content['phrase'], code: content['code']}
+      )
+      
       res.writeHead content['code'],
           'Content-Type': 'application/json'
           'Content-Length': data.length
