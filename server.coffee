@@ -3,9 +3,8 @@ class Server
   set = require './Set'
   @recommendables = set.createSet()
 
-  http = require 'http'
-
   @setup: =>
+    http = require 'http'
     @server = http.createServer (request, response) =>
       #console.log "Request: #{request.method} #{request.url}"
       data = @testJSON()
@@ -35,17 +34,23 @@ class Server
 
   @processImpression: (requestObject) ->
     @saveItem(requestObject.item) if requestObject.item.recommendable
-    recommendations = @makeRecommendation(requestObject) if requestObject.config.recommend
-    content = 
-      code: 200
-      data: recommendations
+    if requestObject.config.recommend
+      recommendations = @findRecommendations(requestObject)
+      content = 
+        code: 200
+        data: recommendations
+    else
+      console.log 'Received impression, but nothing has to be recommended'
+      content =
+        code: 200
+        phrase: 'OK'
       
   @saveItem: (item) ->
     console.log 'Save the item. Recommendable items now are:'
     @recommendables.add item
     console.log @recommendables['hash']
 
-  @makeRecommendation: (requestObject) ->
+  @findRecommendations: (requestObject) ->
     console.log "Let's recommend something"
     #TODO find real recommendations, for now they are 1,2,3 and 4 ;)
     recommendations = 
@@ -67,7 +72,7 @@ class Server
   @respond: (res, content) ->
       data = JSON.stringify(
         content['data'] ? 
-        {error: content['phrase'], code: content['code']}
+        passphrase: content['phrase'], code: content['code']
       )
       
       res.writeHead content['code'],
