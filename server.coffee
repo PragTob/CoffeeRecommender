@@ -16,14 +16,14 @@ class Server
         #console.log requestObject
         switch requestObject.msg
           when 'feedback'
-            @processFeedback(requestObject)
+            content = @processFeedback(requestObject)
           when 'impression'
-            @processImpression(requestObject)
+            content = @processImpression(requestObject)
           when 'error'
-            @processError(requestObject)
+            content = @processError(requestObject)
           else
-            console.log 'lol?'
-        @respond response, 200, 'text/plain', 'Hi'
+            content = @processUnknown(requestObject)
+        @respond response, content
 
 
   @processFeedback: (requestObject) ->
@@ -31,8 +31,11 @@ class Server
 
   @processImpression: (requestObject) ->
     @saveItem(requestObject.item) if requestObject.item.recommendable
-    @makeRecommendation(requestObject) if requestObject.config.recommend
-
+    recommendations = @makeRecommendation(requestObject) if requestObject.config.recommend
+    content = 
+      code: 200
+      data: recommendations
+      
   @saveItem: (item) ->
     console.log 'Save the item. Recommendable items now are:'
     @recommendables.add item
@@ -40,16 +43,22 @@ class Server
 
   @makeRecommendation: (requestObject) ->
     console.log "Let's recommend something"
+    #TODO find real recommendations, for now they are 1,2,3 and 4 ;)
+    recommendations = 
+      items: [1, 2, 3, 4]
 
   @processError: (requestObject) ->
     console.log 'Just received an error'
 
+  #TODO change to take res and value
   # helper function that responds to the client
-  @respond: (res, code, contentType, data) ->
-      res.writeHead code,
-          'Content-Type': contentType
+  @respond: (res, content) ->
+      data = JSON.stringify content['data']
+      res.writeHead content['code'],
+          'Content-Type': 'application/json'
           'Content-Length': data.length
       res.write data
+      console.log res
       res.end()
 
   @start: ->
