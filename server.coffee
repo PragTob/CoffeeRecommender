@@ -1,11 +1,8 @@
 class Server
 
-  sets = require 'simplesets'
-  # normal set class doesn't seem to work appropriately, StringSet does
-  # plus the author says that StringSet is faster for >= 110 elements
-  @recommendables = new sets.StringSet()
-
   @setup: =>
+    {Recommender} = require './recommender'
+    @recommender = new Recommender()
     http = require 'http'
     @server = http.createServer (request, response) =>
       data = @testJSON()
@@ -14,47 +11,14 @@ class Server
         requestObject = JSON.parse(decodeURIComponent(data.trim()))
         switch requestObject.msg
           when 'feedback'
-            content = @processFeedback(requestObject)
+            content = @recommender.processFeedback(requestObject)
           when 'impression'
-            content = @processImpression(requestObject)
+            content = @recommender.processImpression(requestObject)
           when 'error'
             content = @processError(requestObject)
           else
             content = @processUnknown(requestObject)
         @respond response, content
-
-
-  @processFeedback: (requestObject) ->
-    console.log 'Got feedback'
-    #TODO process feedback probably
-    content =
-      code: 200
-      phrase: ''
-
-  @processImpression: (requestObject) ->
-    @saveItem(requestObject.item) if requestObject.item.recommendable
-    if requestObject.config.recommend
-      recommendations = @findRecommendations(requestObject)
-      content =
-        code: 200
-        data: recommendations
-    else
-      console.log 'Received impression, but nothing has to be recommended'
-      content =
-        code: 200
-        phrase: 'OK'
-
-  @saveItem: (item) ->
-    console.log 'Save the item. Recommendable items now are:'
-    @recommendables.add item
-    console.log @recommendables
-    console.log "Size of the set: " + @recommendables.size()
-
-  @findRecommendations: (requestObject) ->
-    console.log "Let's recommend something"
-    #TODO find real recommendations, for now they are 1,2,3 and 4 ;)
-    recommendations =
-      items: [1, 2, 3, 4]
 
   @processError: (requestObject) ->
     console.log 'Just received an error'
