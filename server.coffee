@@ -1,24 +1,33 @@
 class Server
 
   constructor: ->
+    @setupRecommender()
+    @setupHttpServer()
+
+
+  setupRecommender: ->
     {Recommender} = require './recommender'
     @recommender = new Recommender()
+
+  setupHttpServer: ->
     http = require 'http'
     @server = http.createServer (request, response) =>
       data = @testJSON()
       request.on 'data', (chunk) -> data += chunk
-      request.on 'end', () =>
-        requestObject = JSON.parse(decodeURIComponent(data.trim()))
-        switch requestObject.msg
-          when 'feedback'
-            content = @recommender.processFeedback(requestObject)
-          when 'impression'
-            content = @recommender.processImpression(requestObject)
-          when 'error'
-            content = @processError(requestObject)
-          else
-            content = @processUnknown(requestObject)
-        @respond response, content
+      request.on 'end', () => @sendResponse(data, response)
+
+  sendResponse: (data, response)->
+    requestObject = JSON.parse(decodeURIComponent(data.trim()))
+    switch requestObject.msg
+      when 'feedback'
+        content = @recommender.processFeedback(requestObject)
+      when 'impression'
+        content = @recommender.processImpression(requestObject)
+      when 'error'
+        content = @processError(requestObject)
+      else
+        content = @processUnknown(requestObject)
+    @respond response, content
 
   processError: (requestObject) ->
     console.log 'Just received an error'
@@ -32,7 +41,6 @@ class Server
       code: 400
       phrase: "we couldn't process the request message '#{requestObject.msg}'."
 
-  # helper function that responds to the client
   respond: (res, content) ->
       data = JSON.stringify(
         content['data'] ?
