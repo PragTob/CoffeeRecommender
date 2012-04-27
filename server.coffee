@@ -1,7 +1,9 @@
 class Server
 
-  set = require './Set'
-  @recommendables = set.createSet()
+  sets = require 'simplesets'
+  # normal set class doesn't seem to work appropriately, StringSet does
+  # plus the author says that StringSet is faster for >= 110 elements
+  @recommendables = new sets.StringSet()
 
   @setup: =>
     http = require 'http'
@@ -28,7 +30,7 @@ class Server
   @processFeedback: (requestObject) ->
     console.log 'Got feedback'
     #TODO process feedback probably
-    content = 
+    content =
       code: 200
       phrase: ''
 
@@ -36,7 +38,7 @@ class Server
     @saveItem(requestObject.item) if requestObject.item.recommendable
     if requestObject.config.recommend
       recommendations = @findRecommendations(requestObject)
-      content = 
+      content =
         code: 200
         data: recommendations
     else
@@ -44,21 +46,22 @@ class Server
       content =
         code: 200
         phrase: 'OK'
-      
+
   @saveItem: (item) ->
     console.log 'Save the item. Recommendable items now are:'
     @recommendables.add item
-    console.log @recommendables['hash']
+    console.log @recommendables
+    console.log "Size of the set: " + @recommendables.size()
 
   @findRecommendations: (requestObject) ->
     console.log "Let's recommend something"
     #TODO find real recommendations, for now they are 1,2,3 and 4 ;)
-    recommendations = 
+    recommendations =
       items: [1, 2, 3, 4]
 
   @processError: (requestObject) ->
     console.log 'Just received an error'
-    content = 
+    content =
       code: 200
       phrase: "received 'error' request: #{requestObject.code} (#{requestObject.error})"
 
@@ -71,10 +74,10 @@ class Server
   # helper function that responds to the client
   @respond: (res, content) ->
       data = JSON.stringify(
-        content['data'] ? 
+        content['data'] ?
         passphrase: content['phrase'], code: content['code']
       )
-      
+
       res.writeHead content['code'],
           'Content-Type': 'application/json'
           'Content-Length': data.length
