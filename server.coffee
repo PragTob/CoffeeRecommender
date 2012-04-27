@@ -8,13 +8,10 @@ class Server
   @setup: =>
     http = require 'http'
     @server = http.createServer (request, response) =>
-      #console.log "Request: #{request.method} #{request.url}"
       data = @testJSON()
       request.on 'data', (chunk) -> data += chunk
       request.on 'end', () =>
-       # console.log "Data: #{data}"
         requestObject = JSON.parse(decodeURIComponent(data.trim()))
-        #console.log requestObject
         switch requestObject.msg
           when 'feedback'
             content = @processFeedback(requestObject)
@@ -82,7 +79,6 @@ class Server
           'Content-Type': 'application/json'
           'Content-Length': data.length
       res.write data
-      #console.log res
       res.end()
 
   @start: ->
