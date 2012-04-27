@@ -1,6 +1,6 @@
 class Server
 
-  @setup: =>
+  constructor: ->
     {Recommender} = require './recommender'
     @recommender = new Recommender()
     http = require 'http'
@@ -20,20 +20,20 @@ class Server
             content = @processUnknown(requestObject)
         @respond response, content
 
-  @processError: (requestObject) ->
+  processError: (requestObject) ->
     console.log 'Just received an error'
     content =
       code: 200
       phrase: "received 'error' request: #{requestObject.code} (#{requestObject.error})"
 
-  @processUnknown: (requestObject) ->
+  processUnknown: (requestObject) ->
     console.log 'We received a message we can\'t handle'
     content =
       code: 400
       phrase: "we couldn't process the request message '#{requestObject.msg}'."
 
   # helper function that responds to the client
-  @respond: (res, content) ->
+  respond: (res, content) ->
       data = JSON.stringify(
         content['data'] ?
         passphrase: content['phrase'], code: content['code']
@@ -45,10 +45,10 @@ class Server
       res.write data
       res.end()
 
-  @start: ->
+  start: ->
     @server.listen process.env.C9_PORT
 
-  @testJSON: ->
+  testJSON: ->
     '{
       "msg":"impression",
       "id":2,
@@ -83,5 +83,4 @@ class Server
       "version": "1.0"
     }'
 
-Server.setup()
-Server.start()
+exports.Server = Server
