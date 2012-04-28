@@ -1,13 +1,8 @@
 class Server
 
-  constructor: ->
-    @setupRecommender()
+  constructor: (recommendationEngine) ->
+    @recommender = recommendationEngine
     @setupHttpServer()
-
-
-  setupRecommender: ->
-    {Recommender} = require './recommender'
-    @recommender = new Recommender()
 
   setupHttpServer: ->
     http = require 'http'
