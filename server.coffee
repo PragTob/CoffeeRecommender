@@ -9,7 +9,7 @@ class Server
     @server = http.createServer (request, response) =>
       data = @testJSON()
       request.on 'data', (chunk) -> data += chunk
-      request.on 'end', () => @sendResponse(data, response)
+      request.on 'end', => @sendResponse(data, response)
 
   sendResponse: (data, response)->
     requestObject = JSON.parse(decodeURIComponent(data.trim()))
@@ -48,8 +48,8 @@ class Server
       res.write data
       res.end()
 
-  start: ->
-    @server.listen process.env.C9_PORT
+  start: (port = process.env.PORT) ->
+    @server.listen port
 
   testJSON: ->
     '{
