@@ -20,20 +20,15 @@ class Recommender
         code: 200
         data: recommendations
     else
-      console.log 'Received impression, but nothing has to be recommended'
       content =
         code: 200
         phrase: 'OK'
 
-  saveItem: (item) ->
-    console.log 'Save the item. Recommendable items now are:'
-    @recommendables.add item
-    console.log @recommendables
+  saveItem: (item) -> @recommendables.add item
 
   findRecommendations: (requestObject) ->
-    console.log "Let's recommend something"
-    #TODO find real recommendations, for now they are 1,2,3 and 4 ;)
+    #TODO find real recommendations, for now they are empty)
     recommendations =
-      items: [1, 2, 3, 4]
+      items: []
 
 exports.Recommender = Recommender

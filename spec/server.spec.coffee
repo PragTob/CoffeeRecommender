@@ -21,28 +21,24 @@ requestMaker = new RequestMaker(PORT)
 describe 'the server is able to handle basic requests', ->
 
   it 'handles basic feedback requests', ->
-    runs ->
-      requestMaker.post(createTestMessage 'feedback' )
+    runs -> requestMaker.post(createTestMessage 'feedback' )
     waitsFor (-> requestMaker.completed()), 'no feedback', TIMEOUT_TIME
     runs ->
       responseObject = requestMaker.jsonResponse()
       expect(responseObject.passphrase).toMatch 'feedback test'
 
   it 'handles basic impression requests', ->
-    runs ->
-      requestMaker.post(createTestMessage 'impression' )
+    runs -> requestMaker.post(createTestMessage 'impression' )
     waitsFor (-> requestMaker.completed()), 'no impression', TIMEOUT_TIME
     runs ->
       responseObject = requestMaker.jsonResponse()
       expect(responseObject.passphrase).toMatch 'impression test'
 
   it 'handles basic error requests', ->
-    runs ->
-      requestMaker.post(createTestMessage 'error' )
+    runs -> requestMaker.post(createTestMessage 'error' )
     waitsFor (-> requestMaker.completed()), 'no answer for error', TIMEOUT_TIME
     runs ->
       responseObject = requestMaker.jsonResponse()
       expect(responseObject.passphrase).toMatch 'error'
 
-runs ->
-  server.stop()
+runs -> server.stop()

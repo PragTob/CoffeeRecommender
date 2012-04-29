@@ -25,13 +25,11 @@ class Server
     @respond response, content
 
   processError: (requestObject) ->
-    console.log 'Just received an error'
     content =
       code: 200
       phrase: "received 'error' request: #{requestObject.code} (#{requestObject.error})"
 
   processUnknown: (requestObject) ->
-    console.log 'We received a message we can\'t handle'
     content =
       code: 400
       phrase: "we couldn't process the request message '#{requestObject.msg}'."
@@ -48,45 +46,8 @@ class Server
       res.write data
       res.end()
 
-  start: (port = process.env.PORT) ->
-    @server.listen port
+  start: (port = process.env.PORT) -> @server.listen port
 
-  stop: ->
-    @server.close()
-
-  testJSON: ->
-    '{
-      "msg":"impression",
-      "id":2,
-      "client":{
-        "id":1
-      },
-      "domain":{
-      	"id":2
-      },
-      "item":{
-      	"id":5,
-      	"title":"muuh",
-      	"url":"google.de",
-      	"created":42,
-      	"text":"a cow",
-      	"img":"google.de/images.jpg",
-      	"recommendable":true
-      },
-      "context":{
-      	"category":{
-      		"id":77
-      	}
-      },
-      "config":{
-      	"team":{
-      		"id":2
-      	},
-      	"timeout":200.0,
-      	"recommend":true,
-      	"limit":5
-      },
-      "version": "1.0"
-    }'
+  stop: -> @server.close()
 
 exports.Server = Server
