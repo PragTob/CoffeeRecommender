@@ -1,14 +1,6 @@
-{Server} = require './../lib/server'
 {Recommender} = require './../lib/recommender'
-{RequestMaker} = require './helper/requestmaker'
+{SpecHelper} = require './helper/specHelper'
 PORT = 4050
-TIMEOUT_TIME = 1000
-
-setupServer = ->
-  recommender = new Recommender()
-  server = new Server(recommender)
-  server.start PORT
-  server
 
 testJSON = ->
   '{
@@ -45,16 +37,15 @@ testJSON = ->
     "version": "1.0"
   }'
 
-server = setupServer()
-requestMaker = new RequestMaker(PORT)
+itemsJSON = (recommendedItems) ->
+  json =
+    items: recommendedItems
+
+helper = new SpecHelper Recommender, PORT
 
 describe 'Acceptance tests for server and recommendation engine', ->
 
   it 'handles the example JSON well and does not respond when items is empty', ->
-    runs -> requestMaker.post(testJSON())
-    waitsFor (-> requestMaker.completed()), 'acceptance takes too long', TIMEOUT_TIME
-    runs ->
-      responseObject = requestMaker.jsonResponse()
-      expect(responseObject.items).toMatch []
+    helper.sendAndExpectResponse(testJSON(), itemsJSON([]))
 
-runs -> server.stop()
+runs -> helper.stopServer()

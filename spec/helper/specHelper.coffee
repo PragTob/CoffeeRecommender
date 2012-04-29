@@ -3,6 +3,7 @@
 
 TIMEOUT_TIME = 1000
 
+# TODO I run a server... I'm worthy of a better name than SpecHelper
 class SpecHelper
 
   constructor: (RecommenderClass, @port) ->
