@@ -1,44 +1,28 @@
+{SpecHelper} = require './helper/specHelper'
 {RecommenderMock} = require './helper/recommenderMock'
-{Server} = require './../lib/server'
-{RequestMaker} = require './helper/requestmaker'
-PORT = 2048
-TIMEOUT_TIME = 1000
 
-setupServer = ->
-  recommenderMock = new RecommenderMock()
-  server = new Server(recommenderMock)
-  server.start PORT
-  server
+passphrase = (phrase) ->
+  json =
+    passphrase: phrase
 
 createTestMessage = (message) ->
   json =
     msg: message
   data = JSON.stringify json
 
-server = setupServer()
-requestMaker = new RequestMaker(PORT)
+PORT = 2048
+helper = new SpecHelper(RecommenderMock, PORT)
+
 
 describe 'the server is able to handle basic requests', ->
 
   it 'handles basic feedback requests', ->
-    runs -> requestMaker.post(createTestMessage 'feedback' )
-    waitsFor (-> requestMaker.completed()), 'no feedback', TIMEOUT_TIME
-    runs ->
-      responseObject = requestMaker.jsonResponse()
-      expect(responseObject.passphrase).toMatch 'feedback test'
+    helper.sendAndExpectResponse(createTestMessage('feedback'), passphrase('feedback test'))
 
   it 'handles basic impression requests', ->
-    runs -> requestMaker.post(createTestMessage 'impression' )
-    waitsFor (-> requestMaker.completed()), 'no impression', TIMEOUT_TIME
-    runs ->
-      responseObject = requestMaker.jsonResponse()
-      expect(responseObject.passphrase).toMatch 'impression test'
+    helper.sendAndExpectResponse(createTestMessage('impression'), passphrase('impression test'))
 
   it 'handles basic error requests', ->
-    runs -> requestMaker.post(createTestMessage 'error' )
-    waitsFor (-> requestMaker.completed()), 'no answer for error', TIMEOUT_TIME
-    runs ->
-      responseObject = requestMaker.jsonResponse()
-      expect(responseObject.passphrase).toMatch 'error'
+    helper.sendAndExpectResponse(createTestMessage('error'), passphrase('error'))
 
-runs -> server.stop()
+runs -> helper.stopServer()
