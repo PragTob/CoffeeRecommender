@@ -7,11 +7,12 @@ class Server
   setupHttpServer: ->
     http = require 'http'
     @server = http.createServer (request, response) =>
-      data = '' #@testJSON()
+      data = ''
       request.on 'data', (chunk) -> data += chunk
       request.on 'end', =>  @sendResponse(data, response)
 
   sendResponse: (data, response)->
+    data = @fakeData() if data == ''
     requestObject = JSON.parse(decodeURIComponent(data.trim()))
     switch requestObject.msg
       when 'feedback'
@@ -23,6 +24,10 @@ class Server
       else
         content = @processUnknown(requestObject)
     @respond response, content
+
+  # in case people still start the server and expect to see something
+  fakeData: ->
+    '{"msg":"oh you try requests with empty data? Try running the tests!"}'
 
   processError: (requestObject) ->
     content =
