@@ -23,4 +23,6 @@ class RequestMaker
 
   completed: -> @completeData != ''
 
+  jsonResponse: -> JSON.parse(decodeURIComponent(@completeData.trim()))
+
 exports.RequestMaker = RequestMaker
