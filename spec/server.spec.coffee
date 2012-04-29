@@ -8,6 +8,8 @@ allData = null
 
 console.log 'ir goes on'
 
+isCompleted = -> completed == true
+
 postOptions = ->
   options =
     host: '0.0.0.0',
@@ -18,22 +20,27 @@ postOptions = ->
 makePostRequest = (sendData) ->
   options = postOptions()
   request = http.request options, (response) ->
-    response.on 'data', (chunk) -> responseData += chunk
+    responseData = ''
+    response.on 'data', (chunk) ->
+      responseData += chunk
+      console.log 'received some data: ' + responseData
     response.on 'end', ->
+      console.log 'received end: ' + responseData
       allData = responseData
       completed = true
-  request.write sendData
-  request.end
+  request.end sendData
 
 setupServer = ->
   recommenderMock = new RecommenderMock()
   server = new Server(recommenderMock)
 
-'setting up the server'
+console.log 'setting up the server'
 server = setupServer()
 server.start PORT
 
-'boom?'
+waits 20
+
+console.log 'boom?'
 
 
 describe 'the server is able to handle basic requests', ->
@@ -41,15 +48,20 @@ describe 'the server is able to handle basic requests', ->
   afterEach -> completed = false
 
   it 'can handle a basic feedback request', ->
-    json =
-      msg: 'feedback'
-    data = JSON.stringify json
-    makePostRequest(data)
-    console.log 'lol?'
-    waitsFor (-> completed), 'epic fail', 1000
-    console.log 'we will never get here?'
-    responseObject = JSON.parse(decodeURIComponent(allData.trim()))
-    expect(responseObject.phrase).toEqual 'feedback'
-
-
-
+    @after ->
+      console.log 'We should ne be here before the spec breaks'
+      server.stop()
+    runs ->
+      json =
+        msg: 'feedback'
+      data = JSON.stringify json
+      console.log data
+      makePostRequest(data)
+      console.log 'lol?'
+    waitsFor (-> isCompleted()), 'epic fail', 10000
+    runs ->
+      console.log 'we will never get here?'
+      console.log allData
+      responseObject = JSON.parse(decodeURIComponent(allData.trim()))
+      console.log responseObject
+      expect(responseObject.passphrase).toEqual 'feedback test'

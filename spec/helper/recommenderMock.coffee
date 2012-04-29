@@ -2,11 +2,11 @@ class RecommenderMock
   processFeedback: (requestObject) ->
     content =
       code: 200
-      phrase: 'Feedback'
+      phrase: 'feedback test'
 
   processImpression: (requestObject) ->
     content =
       code: 200
-      phrase: 'Impression'
+      phrase: 'impression test'
 
 exports.RecommenderMock = RecommenderMock

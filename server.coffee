@@ -7,11 +7,16 @@ class Server
   setupHttpServer: ->
     http = require 'http'
     @server = http.createServer (request, response) =>
-      data = @testJSON()
-      request.on 'data', (chunk) -> data += chunk
-      request.on 'end', => @sendResponse(data, response)
+      data = '' #@testJSON()
+      request.on 'data', (chunk) ->
+        data += chunk
+        console.log 'Server received data'
+      request.on 'end', =>
+        console.log 'Server received end'
+        @sendResponse(data, response)
 
   sendResponse: (data, response)->
+    console.log data
     requestObject = JSON.parse(decodeURIComponent(data.trim()))
     switch requestObject.msg
       when 'feedback'
@@ -50,6 +55,9 @@ class Server
 
   start: (port = process.env.PORT) ->
     @server.listen port
+
+  stop: ->
+    @server.close()
 
   testJSON: ->
     '{
