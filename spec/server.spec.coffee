@@ -2,7 +2,7 @@ console.log 'we start'
 {RecommenderMock} = require './helper/recommenderMock'
 {Server} = require './../server'
 http = require 'http'
-PORT = process.env.PORT
+PORT = 2055
 completed = false
 allData = null
 
