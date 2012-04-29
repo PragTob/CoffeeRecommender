@@ -1,5 +1,5 @@
 {RecommenderMock} = require './helper/recommenderMock'
-{Server} = require './../server'
+{Server} = require './../lib/server'
 {RequestMaker} = require './helper/requestmaker'
 PORT = 2048
 TIMEOUT_TIME = 1000

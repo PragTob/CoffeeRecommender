@@ -1,5 +1,5 @@
-{Server} = require './../server'
-{Recommender} = require './../recommender'
+{Server} = require './../lib/server'
+{Recommender} = require './../lib/recommender'
 {RequestMaker} = require './helper/requestmaker'
 PORT = 4050
 TIMEOUT_TIME = 1000
