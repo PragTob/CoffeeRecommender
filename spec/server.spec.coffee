@@ -34,9 +34,6 @@ setupServer = ->
 
 server = setupServer()
 
-# wait a bit for the server to start
-waits 7
-
 describe 'the server is able to handle basic requests', ->
 
   afterEach -> completed = false
