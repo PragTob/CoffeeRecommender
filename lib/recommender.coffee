@@ -1,9 +1,9 @@
 class Recommender
   constructor: ->
-    Sets = require 'simplesets'
+    {Set} = require './set'
     # normal set class doesn't seem to work appropriately, StringSet does
     # plus the author says that StringSet is faster for >= 110 elements
-    @recommendables = new Sets.StringSet()
+    @recommendables = new Set()
 
   processFeedback: (requestObject) ->
     console.log 'Got feedback'
