@@ -14,12 +14,16 @@ class ServerTester
     @server = new Server(recommender)
     @server.start @port
 
-  sendAndExpectResponse: (send, response) ->
+  sendAndExpectPassphrase: (send, passphrase) ->
+    @sendAndExpect send, (responseObject) ->
+      expect(responseObject.passphrase).toMatch passphrase
+
+  sendAndExpect: (send, func) ->
     runs => @requestMaker.post(send)
     waitsFor (=> @requestMaker.completed()), 'request timed out', TIMEOUT_TIME
     runs =>
       responseObject = @requestMaker.jsonResponse()
-      expect(responseObject).toMatch response
+      func.call @, responseObject
 
   stopServer: -> @server.stop()
 

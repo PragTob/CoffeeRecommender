@@ -1,10 +1,6 @@
 {ServerTester} = require './helper/serverTester'
 {RecommenderMock} = require './helper/recommenderMock'
 
-passphrase = (phrase) ->
-  json =
-    passphrase: phrase
-
 createTestMessage = (message) ->
   json =
     msg: message
@@ -17,12 +13,12 @@ helper = new ServerTester(RecommenderMock, PORT)
 describe 'the server is able to handle basic requests', ->
 
   it 'handles basic feedback requests', ->
-    helper.sendAndExpectResponse(createTestMessage('feedback'), passphrase('feedback test'))
+    helper.sendAndExpectPassphrase(createTestMessage('feedback'), 'feedback test')
 
   it 'handles basic impression requests', ->
-    helper.sendAndExpectResponse(createTestMessage('impression'), passphrase('impression test'))
+    helper.sendAndExpectPassphrase(createTestMessage('impression'), 'impression test')
 
   it 'handles basic error requests', ->
-    helper.sendAndExpectResponse(createTestMessage('error'), passphrase('error'))
+    helper.sendAndExpectPassphrase(createTestMessage('error'), 'error')
 
 runs -> helper.stopServer()

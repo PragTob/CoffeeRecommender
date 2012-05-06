@@ -37,15 +37,12 @@ testJSON = ->
     "version": "1.0"
   }'
 
-itemsJSON = (recommendedItems) ->
-  json =
-    items: recommendedItems
-
 helper = new ServerTester Recommender, PORT
 
 describe 'Acceptance tests for server and recommendation engine', ->
 
-  it 'handles the example JSON well and does not respond when items is empty', ->
-    helper.sendAndExpectResponse(testJSON(), itemsJSON([]))
+  it 'handles the example JSON well and does not respond when items are empty', ->
+    helper.sendAndExpect testJSON(), (responseObject) ->
+      expect(responseObject.items).toEqual([])
 
 runs -> helper.stopServer()
