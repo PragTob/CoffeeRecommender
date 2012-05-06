@@ -1,5 +1,5 @@
 {Recommender} = require './../lib/recommender'
-{SpecHelper} = require './helper/specHelper'
+{ServerTester} = require './helper/serverTester'
 PORT = 4050
 
 testJSON = ->
@@ -41,7 +41,7 @@ itemsJSON = (recommendedItems) ->
   json =
     items: recommendedItems
 
-helper = new SpecHelper Recommender, PORT
+helper = new ServerTester Recommender, PORT
 
 describe 'Acceptance tests for server and recommendation engine', ->
 

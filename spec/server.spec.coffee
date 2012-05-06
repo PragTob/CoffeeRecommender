@@ -1,4 +1,4 @@
-{SpecHelper} = require './helper/specHelper'
+{ServerTester} = require './helper/serverTester'
 {RecommenderMock} = require './helper/recommenderMock'
 
 passphrase = (phrase) ->
@@ -11,7 +11,7 @@ createTestMessage = (message) ->
   data = JSON.stringify json
 
 PORT = 2048
-helper = new SpecHelper RecommenderMock, PORT
+helper = new ServerTester(RecommenderMock, PORT)
 
 
 describe 'the server is able to handle basic requests', ->
