@@ -1,3 +1,5 @@
+_ = require 'underscore'
+
 class Recommender
   constructor: (@itemStorage) ->
 
@@ -26,5 +28,9 @@ class Recommender
     #TODO find real recommendations, for now they are empty)
     recommendations =
       items: []
+
+  sortItemsByHitCount: (items) ->
+    # minus so we get a descending sort not an ascending
+    _.sortBy items, (item) -> -item.hitcount
 
 exports.Recommender = Recommender
