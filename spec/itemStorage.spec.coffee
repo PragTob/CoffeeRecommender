@@ -49,7 +49,7 @@ describe 'ItemSet class', ->
       expect(@storage[DOMAIN_ID][ITEM_ID]).toEqual exampleItem()
 
     it 'does not save the same item twice', ->
-      @storage.save(otherExampleMessage())
+      @storage.save(exampleMessage())
       size = 0
       _.each @storage[DOMAIN_ID], (each) -> size++
       expect(size).toEqual(1)
