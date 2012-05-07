@@ -38,7 +38,7 @@ describe 'ItemSet class', ->
   beforeEach -> @storage = new ItemSet()
   
   it 'can be created', ->
-    expect(@storage).toBeDefined
+    expect(@storage).toBeDefined()
     
   describe 'saving items', ->
 
@@ -52,7 +52,12 @@ describe 'ItemSet class', ->
       expect(@storage[DOMAIN_ID][ITEM_ID].title).toEqual exampleItem().title
       
     it 'sets the hitcount of a new item to one', ->
-     expect(@storage[DOMAIN_ID][ITEM_ID].hitcount).toEqual(1)
+      expect(@storage[DOMAIN_ID][ITEM_ID].hitcount).toEqual(1)
+     
+    it 'saves 2 items correctly', ->
+      @storage.save(otherExampleMessage())
+      expect(@storage[DOMAIN_ID][ITEM_ID].title).toEqual exampleItem().title
+      expect(@storage[OTHER_DOMAIN_ID][OTHER_ITEM_ID].title).toEqual otherExampleItem().title
       
     describe 'saving the same item twice', ->
     
@@ -65,10 +70,5 @@ describe 'ItemSet class', ->
         
       it 'increases the hit count of the item', ->
         expect(@storage[DOMAIN_ID][ITEM_ID].hitcount).toEqual(2)
-
-    it 'saves 2 items correctly', ->
-      @storage.save(otherExampleMessage())
-      expect(@storage[DOMAIN_ID][ITEM_ID].title).toEqual exampleItem().title
-      expect(@storage[OTHER_DOMAIN_ID][OTHER_ITEM_ID].title).toEqual otherExampleItem().title
     
   

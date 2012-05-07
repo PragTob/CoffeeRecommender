@@ -8,7 +8,7 @@ class ItemSet
       @saveNewItem(element)
       
   increaseHitCount: (element) ->
-    @[element.domain.id][element.item.id].hitcount++
+    @getItemFor(element).hitcount++
     
   saveNewItem: (element) ->
     @[element.domain.id]?= {}
@@ -16,6 +16,8 @@ class ItemSet
     item.hitcount = 1
     @[element.domain.id][element.item.id] = item
 
-  has: (element) -> @[element.domain.id]? and @[element.domain.id][element.item.id]?
+  has: (element) -> @[element.domain.id]? and @getItemFor(element)?
+  
+  getItemFor: (element) -> @[element.domain.id][element.item.id]
 
 exports.ItemSet = ItemSet

@@ -8,4 +8,4 @@ describe 'Recommender', ->
     @recommender = new Recommender()
 
   it 'can be created', ->
-    expect(@Recommender).toBeDefined
+    expect(@recommender).toBeDefined()
