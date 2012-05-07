@@ -5,12 +5,11 @@ TIMEOUT_TIME = 1000
 
 class ServerTester
 
-  constructor: (RecommenderClass, @port) ->
-    @setupServer(RecommenderClass)
+  constructor: (recommender, @port) ->
+    @setupServer(recommender)
     @requestMaker = new RequestMaker(@port)
 
-  setupServer: (RecommenderClass) ->
-    recommender = new RecommenderClass()
+  setupServer: (recommender) ->
     @server = new Server(recommender)
     @server.start @port
 

@@ -1,9 +1,5 @@
 class Recommender
-  constructor: ->
-    {ItemSet} = require './itemStorage'
-    # normal set class doesn't seem to work appropriately, StringSet does
-    # plus the author says that StringSet is faster for >= 110 elements
-    @recommendables = new ItemSet()
+  constructor: (@itemStorage) ->
 
   processFeedback: (requestObject) ->
     console.log 'Got feedback'
@@ -24,7 +20,7 @@ class Recommender
         code: 200
         phrase: 'OK'
 
-  saveItem: (item) -> @recommendables.save item
+  saveItem: (item) -> @itemStorage.save item
 
   findRecommendations: (requestObject) ->
     #TODO find real recommendations, for now they are empty)

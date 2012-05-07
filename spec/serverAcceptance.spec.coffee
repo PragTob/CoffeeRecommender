@@ -1,4 +1,5 @@
 {Recommender} = require './../lib/recommender'
+{ItemStorage} = require './../lib/itemStorage'
 {ServerTester} = require './helper/serverTester'
 PORT = 4050
 
@@ -37,7 +38,8 @@ testJSON = ->
     "version": "1.0"
   }'
 
-helper = new ServerTester Recommender, PORT
+recommender = new Recommender(new ItemStorage)
+helper = new ServerTester recommender, PORT
 
 describe 'Acceptance tests for server and recommendation engine', ->
 

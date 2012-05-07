@@ -7,7 +7,7 @@ createTestMessage = (message) ->
   data = JSON.stringify json
 
 PORT = 2048
-helper = new ServerTester(RecommenderMock, PORT)
+helper = new ServerTester(new RecommenderMock, PORT)
 
 
 describe 'the server is able to handle basic requests', ->
