@@ -2,9 +2,19 @@
 class ItemSet
 
   save: (element) ->
-    unless @has(element)
-      @[element.domain.id]?= {}
-      @[element.domain.id][element.item.id] = element.item
+    if @has(element)
+      @increaseHitCount(element)
+    else
+      @saveNewItem(element)
+      
+  increaseHitCount: (element) ->
+    @[element.domain.id][element.item.id].hitcount++
+    
+  saveNewItem: (element) ->
+    @[element.domain.id]?= {}
+    item = element.item
+    item.hitcount = 1
+    @[element.domain.id][element.item.id] = item
 
   has: (element) -> @[element.domain.id]? and @[element.domain.id][element.item.id]?
 
