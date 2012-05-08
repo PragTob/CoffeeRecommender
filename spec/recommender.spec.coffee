@@ -31,9 +31,13 @@ describe 'Recommender', ->
 
   describe 'findRecommendations', ->
 
+    beforeEach -> @recommendations = @recommender.findRecommendations(requestObject())
+
     it 'responds with an array of an appropriate size', ->
-      recommendations = @recommender.findRecommendations(requestObject())
-      expect(recommendations.length).toEqual LIMIT
+      expect(@recommendations.length).toEqual LIMIT
+
+    it 'respondes with an array where every element is an object with an id', ->
+      _.each @recommendations, (item) -> expect(item.id).toBeDefined()
 
 
 

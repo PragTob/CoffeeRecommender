@@ -49,4 +49,16 @@ describe 'Acceptance tests for server and recommendation engine', ->
     helper.sendAndExpect testJSON(), (responseObject) ->
       expect(responseObject.items).toEqual([])
 
+  it 'sets the correct version number', ->
+    helper.sendAndExpect testJSON(), (responseObject) ->
+      expect(responseObject.version).toEqual("1.0")
+
+  it 'sets the correct tem id', ->
+    helper.sendAndExpect testJSON(), (responseObject) ->
+      expect(responseObject.team.id).toEqual(2)
+
+  it 'sets the right msg type', ->
+    helper.sendAndExpect testJSON(), (responseObject) ->
+      expect(responseObject.msg).toEqual('result')
+
 runs -> helper.stopServer()
