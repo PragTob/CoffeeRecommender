@@ -3,42 +3,40 @@
 {ServerTester} = require './helper/serverTester'
 PORT = 4050
 
-ITEM_ID = "I'm a String ID - weird"
+ITEM_ID = '1'
+TEAM_ID = 1
+VERSION = '1.0'
+RESULT_MESSAGE = 'result'
 
 testJSON = ->
-  '{
-    "msg":"impression",
-    "id":2,
-    "client":{
-      "id":1
-    },
-    "domain":{
-      "id":1
-    },
-    "item":{
-    	"id": "weirdly enough Im a string",
-    	"title":"muuh",
-    	"url":"google.de",
-    	"created":42,
-    	"text":"a cow",
-    	"img":"google.de/images.jpg",
-    	"recommendable":true
-    },
-    "context":{
-    	"category":{
-    		"id":77
-    	}
-    },
-    "config":{
-    	"team":{
-    		"id":2
-    	},
-    	"timeout":200.0,
-    	"recommend":true,
-    	"limit":5
-    },
-    "version": "1.0"
-  }'
+  msg:"impression"
+  id:2
+  client:
+    id:1
+  domain:
+    id:1
+  item:
+    id: ITEM_ID
+    title:"muuh"
+    url:"google.de"
+    created: 42
+    text:"a cow"
+    img:"google.de/images.jpg"
+    recommendable:true
+  context:
+  	category:
+  		id: 77
+  config:
+  	team:
+  		id: TEAM_ID
+  	timeout:200.0
+  	recommend:true
+  	limit:5
+  version: VERSION
+
+
+testJSONString = ->
+  JSON.stringify(testJSON())
 
 recommender = new Recommender(new ItemStorage)
 helper = new ServerTester recommender, PORT
@@ -46,19 +44,19 @@ helper = new ServerTester recommender, PORT
 describe 'Acceptance tests for server and recommendation engine', ->
 
   it 'handles the example JSON well and does not respond when items are empty', ->
-    helper.sendAndExpect testJSON(), (responseObject) ->
+    helper.sendAndExpect testJSONString(), (responseObject) ->
       expect(responseObject.items).toEqual([])
 
   it 'sets the correct version number', ->
-    helper.sendAndExpect testJSON(), (responseObject) ->
-      expect(responseObject.version).toEqual("1.0")
+    helper.sendAndExpect testJSONString(), (responseObject) ->
+      expect(responseObject.version).toEqual(VERSION)
 
   it 'sets the correct tem id', ->
-    helper.sendAndExpect testJSON(), (responseObject) ->
-      expect(responseObject.team.id).toEqual(2)
+    helper.sendAndExpect testJSONString(), (responseObject) ->
+      expect(responseObject.team.id).toEqual(TEAM_ID)
 
   it 'sets the right msg type', ->
-    helper.sendAndExpect testJSON(), (responseObject) ->
-      expect(responseObject.msg).toEqual('result')
+    helper.sendAndExpect testJSONString(), (responseObject) ->
+      expect(responseObject.msg).toEqual(RESULT_MESSAGE)
 
 runs -> helper.stopServer()
