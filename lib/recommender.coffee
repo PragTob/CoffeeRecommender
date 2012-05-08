@@ -1,5 +1,7 @@
 _ = require 'underscore'
 
+# TODO the item property might be missing
+
 class Recommender
   constructor: (@itemStorage) ->
 
