@@ -1,7 +1,10 @@
 {Recommender} = require './../lib/recommender'
 {ItemStorage} = require './../lib/itemStorage'
 {ServerTester} = require './helper/serverTester'
+{ItemStorageMock} = require './helper/itemStorageMock'
 PORT = 4050
+
+ITEM_ID = "I'm a String ID - weird"
 
 testJSON = ->
   '{
@@ -11,10 +14,10 @@ testJSON = ->
       "id":1
     },
     "domain":{
-      "id":2
+      "id":1
     },
     "item":{
-    	"id":5,
+    	"id": "weirdly enough Im a string",
     	"title":"muuh",
     	"url":"google.de",
     	"created":42,

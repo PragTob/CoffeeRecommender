@@ -1,3 +1,4 @@
+# TODO: item IDs are Strings
 # simply an object with several pseudo entries
 class ItemStorageMock
 

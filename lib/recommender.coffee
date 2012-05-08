@@ -5,7 +5,8 @@ class Recommender
 
   processFeedback: (requestObject) ->
     console.log 'Got feedback'
-    #TODO process feedback probably
+    #TODO process feedback properly
+    @saveFeedback(requestObject)
     content =
       code: 200
       phrase: ''
@@ -16,18 +17,28 @@ class Recommender
       recommendations = @findRecommendations(requestObject)
       content =
         code: 200
-        data: recommendations
+        data:
+          msg: 'result'
+          items: recommendations
+          team:
+            id: requestObject.config.team.id
+          version: requestObject.version
     else
       content =
         code: 200
         phrase: 'OK'
 
+  saveFeedback: (request) -> @itemStorage.feedback request
+
   saveItem: (item) -> @itemStorage.save item
 
   findRecommendations: (requestObject) ->
-    #TODO find real recommendations, for now they are empty)
-    recommendations =
-      items: []
+    domainId = requestObject.domain.id
+    limit = requestObject.config.limit
+    itemsWithoutRequested =  _.reject @itemStorage[domainId], (item) ->
+      item.id == requestObject.item.id
+    items = @sortItemsByHitCount(itemsWithoutRequested).slice(0, limit - 1)
+    recommendations = _.map items, (item) -> id: item.id
 
   sortItemsByHitCount: (items) ->
     # minus so we get a descending sort not an ascending
