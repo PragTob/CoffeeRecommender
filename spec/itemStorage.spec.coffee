@@ -31,8 +31,6 @@ otherExampleItem = () ->
   text: 'a dog'
   recommendable: true
 
-@storage = null
-
 describe 'ItemStorage class', ->
 
   beforeEach -> @storage = new ItemStorage()

@@ -2,9 +2,6 @@ _ = require 'underscore'
 {Recommender} = require './../lib/recommender'
 {ItemStorageMock} = require './helper/itemStorageMock'
 
-@recommender = null
-@storage = null
-
 describe 'Recommender', ->
 
   beforeEach ->
