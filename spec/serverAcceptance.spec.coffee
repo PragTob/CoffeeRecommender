@@ -1,7 +1,6 @@
 {Recommender} = require './../lib/recommender'
 {ItemStorage} = require './../lib/itemStorage'
 {ServerTester} = require './helper/serverTester'
-{ItemStorageMock} = require './helper/itemStorageMock'
 PORT = 4050
 
 ITEM_ID = "I'm a String ID - weird"

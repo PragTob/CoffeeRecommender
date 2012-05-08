@@ -37,7 +37,7 @@ class Recommender
     limit = requestObject.config.limit
     itemsWithoutRequested =  _.reject @itemStorage[domainId], (item) ->
       item.id == requestObject.item.id
-    items = @sortItemsByHitCount(itemsWithoutRequested).slice(0, limit - 1)
+    items = @sortItemsByHitCount(itemsWithoutRequested).slice(0, limit)
     recommendations = _.map items, (item) -> id: item.id
 
   sortItemsByHitCount: (items) ->
