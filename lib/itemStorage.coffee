@@ -1,4 +1,3 @@
-#Just a simple Set implementation
 class ItemStorage
 
   save: (element) ->
