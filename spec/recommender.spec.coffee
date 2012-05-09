@@ -62,7 +62,7 @@ describe 'Recommender', ->
 
     it 'has the team id set to an empty string if no team id was given', ->
       noTeamAnswer = @recommender.processImpression(impressionMessage(false))
-      expect(noTeamAnswer.data.team.id).toEqual 42
+      expect(noTeamAnswer.data.team.id).toEqual 48
 
     it 'has an items array of the appropriate size', ->
       expect(@answer.data.items.length).toEqual(LIMIT)

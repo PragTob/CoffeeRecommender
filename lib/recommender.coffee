@@ -2,7 +2,7 @@ _ = require 'underscore'
 
 # TODO the item property might be missing
 
-DEFAULT_ID = 42
+DEFAULT_ID = 48
 
 class Recommender
   constructor: (@itemStorage) ->
