@@ -2,6 +2,8 @@ _ = require 'underscore'
 
 # TODO the item property might be missing
 
+DEFAULT_ID = 42
+
 class Recommender
   constructor: (@itemStorage) ->
 
@@ -17,7 +19,7 @@ class Recommender
     @saveItem(requestObject) if requestObject.item.recommendable
     if requestObject.config.recommend
       recommendations = @findRecommendations(requestObject)
-      teamId = requestObject.config.team?.id ? ''
+      teamId = requestObject.config.team?.id ? @ourId()
       content =
         code: 200
         data:
@@ -46,5 +48,7 @@ class Recommender
   sortItemsByHitCount: (items) ->
     # minus so we get a descending sort not an ascending
     _.sortBy items, (item) -> -item.hitcount
+
+  ourId = -> @itemStorage.ourId ? DEFAULT_ID
 
 exports.Recommender = Recommender

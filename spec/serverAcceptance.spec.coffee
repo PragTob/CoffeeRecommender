@@ -66,6 +66,6 @@ describe 'Acceptance tests for server and recommendation engine', ->
 
   it 'handles messages without a team id', ->
     helper.sendAndExpect JSON.stringify(jsonWithoutTeam()), (responseObject) ->
-      expect(responseObject.team.id).toEqual('')
+      expect(responseObject.team.id).toEqual(42)
 
 runs -> helper.stopServer()
