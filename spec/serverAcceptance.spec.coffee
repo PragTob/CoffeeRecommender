@@ -34,6 +34,11 @@ testJSON = ->
   	limit:5
   version: VERSION
 
+jsonWithoutTeam = ->
+  json = testJSON()
+  json.config.team = undefined
+  json
+
 
 testJSONString = ->
   JSON.stringify(testJSON())
@@ -58,5 +63,9 @@ describe 'Acceptance tests for server and recommendation engine', ->
   it 'sets the right msg type', ->
     helper.sendAndExpect testJSONString(), (responseObject) ->
       expect(responseObject.msg).toEqual(RESULT_MESSAGE)
+
+  it 'handles messages without a team id', ->
+    helper.sendAndExpect JSON.stringify(jsonWithoutTeam()), (responseObject) ->
+      expect(responseObject.team.id).toEqual('')
 
 runs -> helper.stopServer()
