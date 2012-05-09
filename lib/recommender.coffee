@@ -7,7 +7,7 @@ class Recommender
 
   processFeedback: (requestObject) ->
     console.log 'Got feedback'
-    #TODO process feedback properly
+    #TODO process feedback of unknown items and process it better
     @saveFeedback(requestObject)
     content =
       code: 200
