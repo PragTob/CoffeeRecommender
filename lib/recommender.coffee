@@ -49,6 +49,6 @@ class Recommender
     # minus so we get a descending sort not an ascending
     _.sortBy items, (item) -> -item.hitcount
 
-  ourId = -> @itemStorage.ourId ? DEFAULT_ID
+  ourId: -> @itemStorage.ourId ? DEFAULT_ID
 
 exports.Recommender = Recommender
