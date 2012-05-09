@@ -2,7 +2,7 @@ _ = require 'underscore'
 {ItemStorage} = require './../lib/itemStorage'
 
 DOMAIN_ID = 1
-ITEM_ID = 10
+ITEM_ID = '10'
 ITEM_TITLE = 'An item'
 OTHER_DOMAIN_ID = 2
 OTHER_ITEM_ID = 20
@@ -30,6 +30,13 @@ otherExampleItem = () ->
   title: 'HMMM'
   text: 'a dog'
   recommendable: true
+
+exampleFeedbackMessage = (itemId = ITEM_ID) ->
+  msg: 'feedback'
+  domain:
+    id: DOMAIN_ID
+  target:
+    id: itemId
 
 describe 'ItemStorage class', ->
 
@@ -69,4 +76,14 @@ describe 'ItemStorage class', ->
       it 'increases the hit count of the item', ->
         expect(@storage[DOMAIN_ID][ITEM_ID].hitcount).toEqual(2)
 
+    describe 'handling feedback', ->
 
+      it 'can tell that it has an item that feedback applies to', ->
+        expect(@storage.hasFeedback exampleFeedbackMessage()).toBeTruthy()
+
+      it 'can tell when there is no such item the feedback applies to', ->
+        expect(@storage.hasFeedback exampleFeedbackMessage('not existent')).toBeFalsy()
+
+      it 'increases the hitcount of the item', ->
+        @storage.feedback exampleFeedbackMessage()
+        expect(@storage[DOMAIN_ID][ITEM_ID].hitcount).toEqual(2)
