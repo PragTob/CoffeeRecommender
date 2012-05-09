@@ -42,8 +42,7 @@ class Server
 
   respond: (res, content) ->
       data = JSON.stringify(
-        content['data'] ?
-        passphrase: content['phrase'], code: content['code']
+        content['data'] ? passphrase: content['phrase'], code: content['code']
       )
 
       res.writeHead content['code'],
