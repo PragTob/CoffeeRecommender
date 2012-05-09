@@ -4,6 +4,8 @@ _ = require 'underscore'
 
 LIMIT = 4
 DOMAIN_ID = 1
+TEAM_ID = 77
+VERSION = "1.0"
 
 requestObject = (itemId = "5") ->
   domain:
@@ -12,6 +14,13 @@ requestObject = (itemId = "5") ->
     id: itemId
   config:
     limit: LIMIT
+
+impressionMessage = (teamIdGiven = true) ->
+  json = requestObject()
+  json.version = VERSION
+  json.config.recommend = true
+  json.config.team = {id: TEAM_ID} if teamIdGiven
+  json
 
 describe 'Recommender', ->
 
@@ -39,5 +48,21 @@ describe 'Recommender', ->
     it 'respondes with an array where every element is an object with an id', ->
       _.each @recommendations, (item) -> expect(item.id).toBeDefined()
 
+  describe 'processImpression', ->
+    beforeEach -> @answer = @recommender.processImpression(impressionMessage())
 
+    it 'is defined', ->
+      expect(@answer).toBeDefined()
 
+    it 'has the Version', ->
+      expect(@answer.data.version).toEqual(VERSION)
+
+    it 'has a team id', ->
+      expect(@answer.data.team.id).toEqual(TEAM_ID)
+
+    it 'has the team id set to an empty string if no team id was given', ->
+      noTeamAnswer = @recommender.processImpression(impressionMessage(false))
+      expect(noTeamAnswer.data.team.id).toEqual ''
+
+    it 'has an items array of the appropriate size', ->
+      expect(@answer.data.items.length).toEqual(LIMIT)

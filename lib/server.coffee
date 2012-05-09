@@ -14,6 +14,7 @@ class Server
   sendResponse: (data, response)->
     data = @fakeData() if data == ''
     requestObject = JSON.parse(decodeURIComponent(data.trim()))
+    console.log requestObject
     switch requestObject.msg
       when 'feedback'
         content = @recommender.processFeedback(requestObject)

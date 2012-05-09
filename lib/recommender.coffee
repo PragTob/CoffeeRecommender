@@ -17,13 +17,14 @@ class Recommender
     @saveItem(requestObject) if requestObject.item.recommendable
     if requestObject.config.recommend
       recommendations = @findRecommendations(requestObject)
+      teamId = requestObject.config.team?.id ? ''
       content =
         code: 200
         data:
           msg: 'result'
           items: recommendations
           team:
-            id: requestObject.config.team.id
+            id: teamId
           version: requestObject.version
     else
       content =
