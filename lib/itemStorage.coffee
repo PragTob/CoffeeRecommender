@@ -2,6 +2,14 @@ fs = require 'fs'
 
 class ItemStorage
 
+  constructor: (filePath = null) ->
+    @loadFromFile(filePath) if filePath
+  
+  loadFromFile: (filePath) ->
+    savedStorage = JSON.parse(fs.readFileSync filePath,'utf8')
+    for key, value of savedStorage
+      @[key] = value
+  
   save: (element) ->
     if @has(element)
       @increaseHitCount(element)

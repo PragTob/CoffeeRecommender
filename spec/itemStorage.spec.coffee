@@ -98,8 +98,18 @@ describe 'ItemStorage class', ->
       afterEach -> fs.unlinkSync(FILE_PATH)
       
       it 'can save the items to a file', ->
-          waits 1000
-          expect(fs.statSync(FILE_PATH).isFile()).toBeTruthy()        
+        expect(fs.statSync(FILE_PATH).isFile()).toBeTruthy()
+    
+      describe 'storage loaded from file', ->
+        
+        beforeEach -> @savedStorage = new ItemStorage FILE_PATH
+        
+        it 'loads the saved storage correctly from file', ->
+          expect(@savedStorage[DOMAIN_ID][ITEM_ID]).toBeDefined()
+          
+        it 'operates as a normal storage', ->
+          @savedStorage.save(otherExampleMessage())
+          expect(@savedStorage[OTHER_DOMAIN_ID][OTHER_ITEM_ID].title).toEqual otherExampleItem().title
       
   describe 'handling of categories', ->
 
