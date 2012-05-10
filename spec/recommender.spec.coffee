@@ -80,6 +80,7 @@ describe 'Recommender', ->
 
     it 'has an items array of the appropriate size', ->
       expect(@answer.data.items.length).toEqual(LIMIT)
+      
   describe 'processImpression without item in request', ->  
     
     beforeEach ->
@@ -88,5 +89,5 @@ describe 'Recommender', ->
     it 'is defined', ->
       expect(@answerWithoutItem).toBeDefined()
     
-    it 'works with a request that has no item', ->
+    it 'has an items array of the appropriate size', ->
       expect(@answerWithoutItem.data.items.length).toEqual(LIMIT)
