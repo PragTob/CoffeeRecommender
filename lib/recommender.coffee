@@ -40,10 +40,9 @@ class Recommender
   findRecommendations: (requestObject) ->
     domainId = requestObject.domain.id
     limit = requestObject.config.limit
-    itemsWithoutRequested = items
-    if requestObject.item?
-      itemsWithoutRequested =  _.reject @itemStorage[domainId], (item) ->
-        item.id == requestObject.item.id
+    itemId = requestObject.item?.id ? null
+    itemsWithoutRequested =  _.reject @itemStorage[domainId], (item) ->
+      item.id == itemId
     items = @sortItemsByHitCount(itemsWithoutRequested).slice(0, limit)
     recommendations = _.map items, (item) -> id: item.id
 
