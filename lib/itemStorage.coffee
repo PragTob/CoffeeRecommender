@@ -1,3 +1,5 @@
+fs = require 'fs'
+
 class ItemStorage
 
   save: (element) ->
@@ -25,5 +27,9 @@ class ItemStorage
   hasFeedback: (element) -> @[element.domain.id]? and @[element.domain.id][element.target.id]?
 
   getItemFor: (element) -> @[element.domain.id][element.item.id]
+  
+  persist: (path) ->
+    stringRepresentation = JSON.stringify @
+    fs.writeFileSync path, stringRepresentation, 'utf8'
 
 exports.ItemStorage = ItemStorage
