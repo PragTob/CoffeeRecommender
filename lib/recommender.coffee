@@ -16,7 +16,7 @@ class Recommender
       phrase: ''
 
   processImpression: (requestObject) ->
-    @saveItem(requestObject) if requestObject.item.recommendable
+    @saveItem(requestObject) if requestObject.item?.recommendable
     if requestObject.config.recommend
       recommendations = @findRecommendations(requestObject)
       teamId = requestObject.config.team?.id ? @ourId()
