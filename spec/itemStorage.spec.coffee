@@ -1,5 +1,6 @@
 _ = require 'underscore'
 fs = require 'fs'
+path = require 'path'
 
 {ItemStorage} = require './../lib/itemStorage'
 
@@ -98,7 +99,7 @@ describe 'ItemStorage class', ->
       afterEach -> fs.unlinkSync(FILE_PATH)
       
       it 'can save the items to a file', ->
-        expect(fs.statSync(FILE_PATH).isFile()).toBeTruthy()
+        expect(path.existsSync(FILE_PATH)).toBeTruthy()
     
       describe 'storage loaded from file', ->
         
