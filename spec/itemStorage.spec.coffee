@@ -93,14 +93,13 @@ describe 'ItemStorage class', ->
 
     describe 'persists the storage', ->
       
-      beforeEach -> runs -> @storage.persist(FILE_PATH)
+      beforeEach -> @storage.persist(FILE_PATH)
       
       afterEach -> fs.unlinkSync(FILE_PATH)
       
       it 'can save the items to a file', ->
-        runs -> 
           waits 1000
-          expect(fs.statSync(FILE_PATH).isFile()).toBeTruthy()
+          expect(fs.statSync(FILE_PATH).isFile()).toBeTruthy()        
       
   describe 'handling of categories', ->
 
