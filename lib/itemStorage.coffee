@@ -12,6 +12,7 @@ class ItemStorage
   saveNewItem: (element) ->
     @[element.domain.id]?= {}
     item = element.item
+    item.category = element.config?.category?.id
     item.hitcount = 1
     @[element.domain.id][element.item.id] = item
 

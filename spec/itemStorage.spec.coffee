@@ -87,3 +87,12 @@ describe 'ItemStorage class', ->
       it 'increases the hitcount of the item', ->
         @storage.feedback exampleFeedbackMessage()
         expect(@storage[DOMAIN_ID][ITEM_ID].hitcount).toEqual(2)
+
+  describe 'handling of categories', ->
+
+    it 'can save an item with a category', ->
+      json = exampleMessage()
+      json.config = {category: { id: 1}}
+      @storage.save json
+
+      expect(@storage[DOMAIN_ID][ITEM_ID].category).toEqual 1
