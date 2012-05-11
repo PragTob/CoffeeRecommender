@@ -15,8 +15,21 @@ requestObject = (itemId = "5") ->
   config:
     limit: LIMIT
 
+requestObjectWithoutItem = ->
+  domain:
+    id: DOMAIN_ID
+  config:
+    limit: LIMIT
+
 impressionMessage = (teamIdGiven = true) ->
   json = requestObject()
+  json.version = VERSION
+  json.config.recommend = true
+  json.config.team = {id: TEAM_ID} if teamIdGiven
+  json
+
+impressionMessageWithoutItem = (teamIdGiven = true) ->
+  json = requestObjectWithoutItem()
   json.version = VERSION
   json.config.recommend = true
   json.config.team = {id: TEAM_ID} if teamIdGiven
@@ -49,7 +62,8 @@ describe 'Recommender', ->
       _.each @recommendations, (item) -> expect(item.id).toBeDefined()
 
   describe 'processImpression', ->
-    beforeEach -> @answer = @recommender.processImpression(impressionMessage())
+    beforeEach -> 
+      @answer = @recommender.processImpression(impressionMessage())
 
     it 'is defined', ->
       expect(@answer).toBeDefined()
@@ -66,3 +80,14 @@ describe 'Recommender', ->
 
     it 'has an items array of the appropriate size', ->
       expect(@answer.data.items.length).toEqual(LIMIT)
+      
+  describe 'processImpression without item in request', ->  
+    
+    beforeEach ->
+      @answerWithoutItem = @recommender.processImpression(impressionMessageWithoutItem())
+    
+    it 'is defined', ->
+      expect(@answerWithoutItem).toBeDefined()
+    
+    it 'has an items array of the appropriate size', ->
+      expect(@answerWithoutItem.data.items.length).toEqual(LIMIT)

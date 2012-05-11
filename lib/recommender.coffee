@@ -16,7 +16,7 @@ class Recommender
       phrase: ''
 
   processImpression: (requestObject) ->
-    @saveItem(requestObject) if requestObject.item.recommendable
+    @saveItem(requestObject) if requestObject.item?.recommendable
     if requestObject.config.recommend
       recommendations = @findRecommendations(requestObject)
       teamId = requestObject.config.team?.id ? @ourId()
@@ -40,8 +40,9 @@ class Recommender
   findRecommendations: (requestObject) ->
     domainId = requestObject.domain.id
     limit = requestObject.config.limit
+    itemId = requestObject.item?.id ? null
     itemsWithoutRequested =  _.reject @itemStorage[domainId], (item) ->
-      item.id == requestObject.item.id
+      item.id == itemId
     items = @sortItemsByHitCount(itemsWithoutRequested).slice(0, limit)
     recommendations = _.map items, (item) -> id: item.id
 
