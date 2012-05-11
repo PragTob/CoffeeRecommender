@@ -8,7 +8,6 @@ class Recommender
   constructor: (@itemStorage) ->
 
   processFeedback: (requestObject) ->
-    console.log 'Got feedback'
     #TODO process feedback of unknown items and process it better
     @saveFeedback(requestObject)
     content =
