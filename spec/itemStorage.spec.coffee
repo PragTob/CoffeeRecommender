@@ -13,13 +13,13 @@ OTHER_ITEM_TITLE = 'Other item'
 FILE_PATH = 'spec/testFiles/storage.test'
 
 # messages simplified for this testing purpose
-exampleMessage = ->
+exampleMessage = (id = ITEM_ID) ->
   domain:
     id: DOMAIN_ID
-  item: exampleItem()
+  item: exampleItem(id)
 
-exampleItem = () ->
-  id: ITEM_ID
+exampleItem = (id) ->
+  id: id
   title: 'muuh'
   text: 'a cow'
   recommendable: true
@@ -68,6 +68,9 @@ describe 'ItemStorage class', ->
       expect(@storage[DOMAIN_ID][ITEM_ID].title).toEqual exampleItem().title
       expect(@storage[OTHER_DOMAIN_ID][OTHER_ITEM_ID].title).toEqual otherExampleItem().title
 
+    it 'starts of with an empty hash for recommends', ->
+      expect(@storage[DOMAIN_ID][ITEM_ID].recommends).toEqual({})
+
     describe 'saving the same item twice', ->
 
       beforeEach -> @storage.save exampleMessage()
@@ -83,14 +86,24 @@ describe 'ItemStorage class', ->
     describe 'handling feedback', ->
 
       it 'can tell that it has an item that feedback applies to', ->
-        expect(@storage.hasFeedback exampleFeedbackMessage()).toBeTruthy()
+        expect(@storage.hasFeedbackTarget exampleFeedbackMessage()).toBeTruthy()
 
       it 'can tell when there is no such item the feedback applies to', ->
-        expect(@storage.hasFeedback exampleFeedbackMessage('not existent')).toBeFalsy()
+        expect(@storage.hasFeedbackTarget exampleFeedbackMessage('not existent')).toBeFalsy()
 
       it 'increases the hitcount of the item', ->
         @storage.feedback exampleFeedbackMessage()
         expect(@storage[DOMAIN_ID][ITEM_ID].hitcount).toEqual(2)
+
+      it 'adjusts the recommends hash of the source to show how often it has been recommended', ->
+        feedbackWithSource = exampleFeedbackMessage()
+        feedbackWithSource.source = { id: OTHER_ITEM_ID }
+        # other item has to be present
+        @storage.save(exampleMessage(OTHER_ITEM_ID))
+
+        @storage.feedback feedbackWithSource
+
+        expect(@storage[DOMAIN_ID][OTHER_ITEM_ID].recommends[ITEM_ID]).toEqual 1
 
     describe 'persists the storage', ->
 

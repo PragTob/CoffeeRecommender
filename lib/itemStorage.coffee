@@ -26,15 +26,27 @@ class ItemStorage
     item = element.item
     item.category = element.context?.category?.id
     item.hitcount = 1
+    item.recommends = {}
     @[element.domain.id][element.item.id] = item
 
   feedback: (element) ->
-    @[element.domain.id][element.target.id].hitcount++ if @hasFeedback(element)
+    @[element.domain.id][element.target.id].hitcount++ if @hasFeedbackTarget element
+    @increaseRecommends element if @hasFeedbackSource element
 
   has: (element) -> @[element.domain.id]? and @getItemFor(element)?
 
   # the objects are slightly different, so we need a different method... sigh
-  hasFeedback: (element) -> @[element.domain.id]? and @[element.domain.id][element.target.id]?
+  hasFeedbackTarget: (element) -> @[element.domain.id]? and @[element.domain.id][element.target.id]?
+
+  hasFeedbackSource: (element) -> @[element.domain.id]? and @[element.domain.id][element.source?.id]?
+
+  increaseRecommends: (element) ->
+    item = @[element.domain.id][element.source.id]
+    targetItem = element.target.id
+    if item.recommends[targetItem]?
+      item.recommends[targetItem]++
+    else
+      item.recommends[targetItem] = 1
 
   getItemFor: (element) -> @[element.domain.id][element.item.id]
 
