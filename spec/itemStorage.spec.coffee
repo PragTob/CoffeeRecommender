@@ -98,6 +98,9 @@ describe 'ItemStorage class', ->
       it 'can tell when there is no such item the feedback applies to', ->
         expect(@storage.hasFeedbackTarget exampleFeedbackMessage('not existent')).toBeFalsy()
 
+      it 'can tell that it has no source FeedbackMessage', ->
+        expect(@storage.hasFeedbackSource exampleFeedbackMessage()).toBeFalsy()
+
       it 'increases the hitcount of the item', ->
         @storage.feedback exampleFeedbackMessage()
         expect(@storage[DOMAIN_ID][ITEM_ID].hitcount).toEqual(2)

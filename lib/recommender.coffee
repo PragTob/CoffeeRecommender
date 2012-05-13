@@ -39,10 +39,11 @@ class Recommender
     domainId = requestObject.domain.id
     limit = requestObject.config.limit
     itemId = requestObject.item?.id ? null
+    item = @itemStorage[domainId][itemId]
     recommendations = []
 
-    if itemId
-      recommendations = @recommendedItems(@itemStorage[domainId][itemId], limit)
+    if item?
+      recommendations = @recommendedItems(item, limit)
       limit -= recommendations.length
 
     if limit > 0
