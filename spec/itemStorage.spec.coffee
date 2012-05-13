@@ -93,30 +93,30 @@ describe 'ItemStorage class', ->
         expect(@storage[DOMAIN_ID][ITEM_ID].hitcount).toEqual(2)
 
     describe 'persists the storage', ->
-      
+
       beforeEach -> @storage.persist(FILE_PATH)
-      
+
       afterEach -> fs.unlinkSync(FILE_PATH)
-      
+
       it 'can save the items to a file', ->
         expect(path.existsSync(FILE_PATH)).toBeTruthy()
-    
+
       describe 'storage loaded from file', ->
-        
+
         beforeEach -> @savedStorage = new ItemStorage FILE_PATH
-        
+
         it 'loads the saved storage correctly from file', ->
           expect(@savedStorage[DOMAIN_ID][ITEM_ID]).toBeDefined()
-          
+
         it 'operates as a normal storage', ->
           @savedStorage.save(otherExampleMessage())
           expect(@savedStorage[OTHER_DOMAIN_ID][OTHER_ITEM_ID].title).toEqual otherExampleItem().title
-      
+
   describe 'handling of categories', ->
 
     it 'can save an item with a category', ->
       json = exampleMessage()
-      json.config = {category: { id: 1}}
+      json.context = {category: { id: 1}}
       @storage.save json
 
       expect(@storage[DOMAIN_ID][ITEM_ID].category).toEqual 1

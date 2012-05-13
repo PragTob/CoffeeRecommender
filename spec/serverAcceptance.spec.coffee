@@ -5,6 +5,9 @@ PORT = 4050
 
 ITEM_ID = '1'
 TEAM_ID = 1
+OUR_TEAM_ID = 48
+CATEGORY_ID = 77
+DOMAIN_ID = 477
 VERSION = '1.0'
 RESULT_MESSAGE = 'result'
 
@@ -14,7 +17,7 @@ testJSON = ->
   client:
     id:1
   domain:
-    id:1
+    id: DOMAIN_ID
   item:
     id: ITEM_ID
     title:"muuh"
@@ -25,7 +28,7 @@ testJSON = ->
     recommendable:true
   context:
   	category:
-  		id: 77
+  		id: CATEGORY_ID
   config:
   	team:
   		id: TEAM_ID
@@ -43,7 +46,8 @@ jsonWithoutTeam = ->
 testJSONString = ->
   JSON.stringify(testJSON())
 
-recommender = new Recommender(new ItemStorage)
+itemStorage = new ItemStorage
+recommender = new Recommender(itemStorage)
 helper = new ServerTester recommender, PORT
 
 describe 'Acceptance tests for server and recommendation engine', ->
@@ -66,6 +70,12 @@ describe 'Acceptance tests for server and recommendation engine', ->
 
   it 'handles messages without a team id', ->
     helper.sendAndExpect JSON.stringify(jsonWithoutTeam()), (responseObject) ->
-      expect(responseObject.team.id).toEqual(48)
+      expect(responseObject.team.id).toEqual(OUR_TEAM_ID)
+
+  it 'saves the category of an item appropriately', ->
+    helper.sendAndExpect testJSONString(), (responseObject) -> # do nothing
+    expect(itemStorage[DOMAIN_ID][ITEM_ID].category).toEqual CATEGORY_ID
+
+
 
 runs -> helper.stopServer()
