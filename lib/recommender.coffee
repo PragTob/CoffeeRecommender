@@ -39,18 +39,33 @@ class Recommender
     domainId = requestObject.domain.id
     limit = requestObject.config.limit
     itemId = requestObject.item?.id ? null
-    #recommended = @itemStorage[domainId][itemId].recommends
-    itemsWithoutRequested =  _.reject @itemStorage[domainId], (item) ->
-      item.id == itemId
-    items = @sortItemsByHitCount(itemsWithoutRequested).slice(0, limit)
-    recommendations = _.map items, (item) -> id: item.id
+    recommendations = []
+
+    if itemId
+      recommendations = @recommendedItems(@itemStorage[domainId][itemId], limit)
+      limit -= recommendations.length
+
+    if limit > 0
+      popularItems = @findPopularItems(domainId, itemId, recommendations, limit)
+      recommendations = recommendations.concat popularItems
+
+    _.map recommendations, (item) -> id: item
+
+  findPopularItems: (domainId, itemId, currentRecommendations, limit) ->
+    unwantedItems = currentRecommendations.slice(0)
+    unwantedItems.push itemId
+    cleanedItems =  _.select @itemStorage[domainId], (item) ->
+        unwantedItems.indexOf(item.id) == -1
+    items = @sortItemsByHitCount(cleanedItems).slice(0, limit)
+    _.map items, (item) -> item.id
 
   sortItemsByHitCount: (items) ->
     # minus so we get a descending sort not an ascending
     _.sortBy items, (item) -> -item.hitcount
 
   recommendedItems: (item, limit) ->
-    _.sortBy(item.recommends, (recommendCount) -> -recommendCount).slice(0, limit)
+    items = _.sortBy(item.recommends, (item) -> -item.count).slice(0, limit)
+    _.map items, (item) -> item.id
 
   ourId: -> @itemStorage.ourId ? DEFAULT_ID
 

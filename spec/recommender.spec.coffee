@@ -2,11 +2,12 @@ _ = require 'underscore'
 {Recommender} = require './../lib/recommender'
 {ItemStorageMock} = require './helper/itemStorageMock'
 
-LIMIT = 4
+LIMIT = 6
 DOMAIN_ID = 1
 TEAM_ID = 77
 VERSION = "1.0"
 ITEM_ID = '1'
+DEFAULT_TEAM_ID = 48
 
 requestObject = (itemId = ITEM_ID) ->
   domain:
@@ -65,6 +66,14 @@ describe 'Recommender', ->
     it 'respondes with an array where every element is an object with an id', ->
       _.each @recommendations, (item) -> expect(item.id).toBeDefined()
 
+    it 'responds with an array where no item is contained twice', ->
+      length = @recommendations.length
+      uniqLength = _.uniq(@recommendations, false, (item) -> item.id).length
+      expect(length).toEqual uniqLength
+
+    it 'does not contain the original item', ->
+      expect(_.map(@recommendations, (item) -> item.id).indexOf(ITEM_ID)).toEqual -1
+
   describe 'processImpression', ->
     beforeEach ->
       @answer = @recommender.processImpression(impressionMessage())
@@ -80,7 +89,7 @@ describe 'Recommender', ->
 
     it 'has the team id set to an empty string if no team id was given', ->
       noTeamAnswer = @recommender.processImpression(impressionMessage(false))
-      expect(noTeamAnswer.data.team.id).toEqual 48
+      expect(noTeamAnswer.data.team.id).toEqual DEFAULT_TEAM_ID
 
     it 'has an items array of the appropriate size', ->
       expect(@answer.data.items.length).toEqual(LIMIT)

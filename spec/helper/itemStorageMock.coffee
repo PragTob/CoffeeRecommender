@@ -8,8 +8,12 @@ class ItemStorageMock
       '1':
         title: 'casual'
         id: '1'
-        hitcount: 1
-        recommends: {'17': 5, '2': 4, '77': 3}
+        hitcount: 1000
+        recommends: {
+                      '17': {id: '17', count: 5},
+                      '2': {id: '2', count: 4},
+                      '77': {id: '77', count: 3}
+                    }
       '2':
         title: 'uninteresting'
         id: '2'

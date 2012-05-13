@@ -104,12 +104,16 @@ describe 'ItemStorage class', ->
 
       it 'adjusts the recommends hash of the source to show how often it has been recommended', ->
         saveFeedbackWithSource(@storage)
-        expect(@storage[DOMAIN_ID][OTHER_ITEM_ID].recommends[ITEM_ID]).toEqual 1
+        expect(@storage[DOMAIN_ID][OTHER_ITEM_ID].recommends[ITEM_ID].count).toEqual 1
+
+      it 'also saves the id of the item', ->
+        saveFeedbackWithSource(@storage)
+        expect(@storage[DOMAIN_ID][OTHER_ITEM_ID].recommends[ITEM_ID].id).toBeDefined()
 
       it 'increases the recommends score if further feedback messages come along', ->
         saveFeedbackWithSource(@storage)
         saveFeedbackWithSource(@storage)
-        expect(@storage[DOMAIN_ID][OTHER_ITEM_ID].recommends[ITEM_ID]).toEqual 2
+        expect(@storage[DOMAIN_ID][OTHER_ITEM_ID].recommends[ITEM_ID].count).toEqual 2
 
     describe 'persists the storage', ->
 

@@ -42,11 +42,11 @@ class ItemStorage
 
   increaseRecommends: (element) ->
     item = @[element.domain.id][element.source.id]
-    targetItem = element.target.id
-    if item.recommends[targetItem]?
-      item.recommends[targetItem]++
+    targetItemId = element.target.id
+    if item.recommends[targetItemId]?
+      item.recommends[targetItemId].count++
     else
-      item.recommends[targetItem] = 1
+      item.recommends[targetItemId] = {id: targetItemId, count: 1}
 
   getItemFor: (element) -> @[element.domain.id][element.item.id]
 
