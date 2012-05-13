@@ -38,7 +38,7 @@ class Recommender
   findRecommendations: (requestObject) ->
     domainId = requestObject.domain.id
     limit = requestObject.config.limit
-    itemId = requestObject.item?.id ? null
+    itemId = requestObject.item?.id
     item = @itemStorage[domainId][itemId]
     recommendations = []
 
