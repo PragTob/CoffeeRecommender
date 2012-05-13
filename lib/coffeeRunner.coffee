@@ -17,7 +17,7 @@ process.on 'exit', ->
   storage.persist(STORAGE_FILE_PATH)
 
 process.on 'uncaughtException', (exception) ->
-  console.log "Still running, but caught an exception: \n #{exception}"
+  console.trace "Still running, but caught an exception: \n #{exception}"
 
 # pattern for cron jobs can be found at
 # http://help.sap.com/saphelp_xmii120/helpdata/en/44/89a17188cc6fb5e10000000a155369/content.htm
