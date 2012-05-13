@@ -8,7 +8,6 @@ class Recommender
   constructor: (@itemStorage) ->
 
   processFeedback: (requestObject) ->
-    #TODO process feedback of unknown items and process it better
     @saveFeedback(requestObject)
     content =
       code: 200
@@ -40,6 +39,7 @@ class Recommender
     domainId = requestObject.domain.id
     limit = requestObject.config.limit
     itemId = requestObject.item?.id ? null
+    #recommended = @itemStorage[domainId][itemId].recommends
     itemsWithoutRequested =  _.reject @itemStorage[domainId], (item) ->
       item.id == itemId
     items = @sortItemsByHitCount(itemsWithoutRequested).slice(0, limit)
@@ -48,6 +48,9 @@ class Recommender
   sortItemsByHitCount: (items) ->
     # minus so we get a descending sort not an ascending
     _.sortBy items, (item) -> -item.hitcount
+
+  recommendedItems: (item, limit) ->
+    _.sortBy(item.recommends, (recommendCount) -> -recommendCount).slice(0, limit)
 
   ourId: -> @itemStorage.ourId ? DEFAULT_ID
 

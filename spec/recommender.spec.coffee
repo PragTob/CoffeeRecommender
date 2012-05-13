@@ -6,8 +6,9 @@ LIMIT = 4
 DOMAIN_ID = 1
 TEAM_ID = 77
 VERSION = "1.0"
+ITEM_ID = '1'
 
-requestObject = (itemId = "5") ->
+requestObject = (itemId = ITEM_ID) ->
   domain:
     id: DOMAIN_ID
   item:
@@ -35,6 +36,11 @@ impressionMessageWithoutItem = (teamIdGiven = true) ->
   json.config.team = {id: TEAM_ID} if teamIdGiven
   json
 
+expectToBeSortedDescending = (items) ->
+  _.each items, (each) ->
+    expect(each.hitcount).not.toBeGreaterThan(last.hitcount) if last?
+    last = each
+
 describe 'Recommender', ->
 
   beforeEach ->
@@ -47,9 +53,7 @@ describe 'Recommender', ->
   it 'can sort items by hitcount', ->
     items = @recommender.sortItemsByHitCount(@storage[DOMAIN_ID])
     last = null
-    _.each items, (each) ->
-      expect(each.hitcount).not.toBeGreaterThan(last.hitcount) if last?
-      last = each
+    expectToBeSortedDescending items
 
   describe 'findRecommendations', ->
 
@@ -62,7 +66,7 @@ describe 'Recommender', ->
       _.each @recommendations, (item) -> expect(item.id).toBeDefined()
 
   describe 'processImpression', ->
-    beforeEach -> 
+    beforeEach ->
       @answer = @recommender.processImpression(impressionMessage())
 
     it 'is defined', ->
@@ -80,14 +84,32 @@ describe 'Recommender', ->
 
     it 'has an items array of the appropriate size', ->
       expect(@answer.data.items.length).toEqual(LIMIT)
-      
-  describe 'processImpression without item in request', ->  
-    
+
+  describe 'processImpression without item in request', ->
+
     beforeEach ->
       @answerWithoutItem = @recommender.processImpression(impressionMessageWithoutItem())
-    
+
     it 'is defined', ->
       expect(@answerWithoutItem).toBeDefined()
-    
+
     it 'has an items array of the appropriate size', ->
       expect(@answerWithoutItem.data.items.length).toEqual(LIMIT)
+
+  describe 'recommendedItems', ->
+
+    it 'returns items equal to the limit if it has enough items', ->
+      limit = Object.keys(@storage[DOMAIN_ID][ITEM_ID].recommends).length
+      items = @recommender.recommendedItems(@storage[DOMAIN_ID][ITEM_ID], limit)
+      expect(items.length).toEqual limit
+
+    it 'returns just the items it has if the limit is too large', ->
+      max = Object.keys(@storage[DOMAIN_ID][ITEM_ID].recommends).length
+      items = @recommender.recommendedItems(@storage[DOMAIN_ID][ITEM_ID], 1000)
+      expect(items.length).toEqual max
+
+    it 'returns the items in descending order', ->
+      items = @recommender.recommendedItems(@storage[DOMAIN_ID][ITEM_ID], 1000)
+      expectToBeSortedDescending items
+
+
