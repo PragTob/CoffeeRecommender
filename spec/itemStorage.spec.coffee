@@ -42,6 +42,13 @@ exampleFeedbackMessage = (itemId = ITEM_ID) ->
   target:
     id: itemId
 
+saveFeedbackWithSource = (storage) ->
+  feedbackWithSource = exampleFeedbackMessage()
+  feedbackWithSource.source = { id: OTHER_ITEM_ID }
+  # other item has to be present
+  storage.save(exampleMessage(OTHER_ITEM_ID))
+  storage.feedback feedbackWithSource
+
 describe 'ItemStorage class', ->
 
   beforeEach -> @storage = new ItemStorage()
@@ -96,14 +103,13 @@ describe 'ItemStorage class', ->
         expect(@storage[DOMAIN_ID][ITEM_ID].hitcount).toEqual(2)
 
       it 'adjusts the recommends hash of the source to show how often it has been recommended', ->
-        feedbackWithSource = exampleFeedbackMessage()
-        feedbackWithSource.source = { id: OTHER_ITEM_ID }
-        # other item has to be present
-        @storage.save(exampleMessage(OTHER_ITEM_ID))
-
-        @storage.feedback feedbackWithSource
-
+        saveFeedbackWithSource(@storage)
         expect(@storage[DOMAIN_ID][OTHER_ITEM_ID].recommends[ITEM_ID]).toEqual 1
+
+      it 'increases the recommends score if further feedback messages come along', ->
+        saveFeedbackWithSource(@storage)
+        saveFeedbackWithSource(@storage)
+        expect(@storage[DOMAIN_ID][OTHER_ITEM_ID].recommends[ITEM_ID]).toEqual 2
 
     describe 'persists the storage', ->
 
