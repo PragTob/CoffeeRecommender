@@ -10,6 +10,17 @@ CATEGORY_ID = 77
 DOMAIN_ID = 477
 VERSION = '1.0'
 RESULT_MESSAGE = 'result'
+TARGET_ID = 55
+
+feedbackJSON = ->
+  msg: 'feedback'
+  client: { id: 7345 }
+  domain: { id: DOMAIN_ID }
+  source: { id: ITEM_ID }
+  target: { id: TARGET_ID }
+  context: { category: { id: 74 } }
+  config: { team: { id: '48' } }
+  version: '1.0'
 
 testJSON = ->
   msg:"impression"
@@ -42,9 +53,8 @@ jsonWithoutTeam = ->
   json.config.team = undefined
   json
 
-
-testJSONString = ->
-  JSON.stringify(testJSON())
+string = (json) ->
+  JSON.stringify json
 
 itemStorage = new ItemStorage
 recommender = new Recommender(itemStorage)
@@ -52,30 +62,44 @@ helper = new ServerTester recommender, PORT
 
 describe 'Acceptance tests for server and recommendation engine', ->
 
-  it 'handles the example JSON well and does not respond when items are empty', ->
-    helper.sendAndExpect testJSONString(), (responseObject) ->
-      expect(responseObject.items).toEqual([])
+  describe 'Impression test messages', ->
 
-  it 'sets the correct version number', ->
-    helper.sendAndExpect testJSONString(), (responseObject) ->
-      expect(responseObject.version).toEqual(VERSION)
+    it 'handles the example JSON well and does not respond when items are empty', ->
+      helper.sendAndExpect string(testJSON()), (responseObject) ->
+        expect(responseObject.items).toEqual([])
 
-  it 'sets the correct tem id', ->
-    helper.sendAndExpect testJSONString(), (responseObject) ->
-      expect(responseObject.team.id).toEqual(TEAM_ID)
+    it 'sets the correct version number', ->
+      helper.sendAndExpect string(testJSON()), (responseObject) ->
+        expect(responseObject.version).toEqual(VERSION)
 
-  it 'sets the right msg type', ->
-    helper.sendAndExpect testJSONString(), (responseObject) ->
-      expect(responseObject.msg).toEqual(RESULT_MESSAGE)
+    it 'sets the correct tem id', ->
+      helper.sendAndExpect string(testJSON()), (responseObject) ->
+        expect(responseObject.team.id).toEqual(TEAM_ID)
 
-  it 'handles messages without a team id', ->
-    helper.sendAndExpect JSON.stringify(jsonWithoutTeam()), (responseObject) ->
-      expect(responseObject.team.id).toEqual(OUR_TEAM_ID)
+    it 'sets the right msg type', ->
+      helper.sendAndExpect string(testJSON()), (responseObject) ->
+        expect(responseObject.msg).toEqual(RESULT_MESSAGE)
 
-  it 'saves the category of an item appropriately', ->
-    helper.sendAndExpect testJSONString(), (responseObject) -> # do nothing
-    expect(itemStorage[DOMAIN_ID][ITEM_ID].category).toEqual CATEGORY_ID
+    it 'handles messages without a team id', ->
+      helper.sendAndExpect string(jsonWithoutTeam()), (responseObject) ->
+        expect(responseObject.team.id).toEqual(OUR_TEAM_ID)
 
+    it 'saves the category of an item appropriately', ->
+      helper.sendAndExpect string(testJSON()), (responseObject) -> # do nothing
+      expect(itemStorage[DOMAIN_ID][ITEM_ID].category).toEqual CATEGORY_ID
 
+  describe 'feedback messages', ->
+  
+    beforeEach ->
+      # we need an item in our db
+      helper.sendAndExpect string(testJSON()), (responseObject) -> #nothing
+      
+    it 'increases the recommends attribute of the item appropriately', ->
+      helper.sendAndExpect string(feedbackJSON()), (response) ->
+        expect(itemStorage[DOMAIN_ID][ITEM_ID].recommends[TARGET_ID].count).toEqual 1
+        
+    it 'sets the id of the item appropriately', ->
+      helper.sendAndExpect string(feedbackJSON()), (response) ->
+        expect(itemStorage[DOMAIN_ID][ITEM_ID].recommends[TARGET_ID].id).toEqual TARGET_ID
 
 runs -> helper.stopServer()
