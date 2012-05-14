@@ -37,9 +37,12 @@ impressionMessageWithoutItem = (teamIdGiven = true) ->
   json.config.team = {id: TEAM_ID} if teamIdGiven
   json
 
-expectToBeSortedDescending = (items) ->
+expectToBeSortedDescending = (items, attribute) ->
+  last = null
+  # the test seems to not fail if the attribute isn't present
+  throw new Error('Item attribute not present in sort testing') unless items[0][attribute]?
   _.each items, (each) ->
-    expect(each.hitcount).not.toBeGreaterThan(last.hitcount) if last?
+    expect(each[attribute]).not.toBeGreaterThan(last[attribute]) if last?
     last = each
 
 describe 'Recommender', ->
@@ -53,8 +56,7 @@ describe 'Recommender', ->
 
   it 'can sort items by hitcount', ->
     items = @recommender.sortItemsByHitCount(@storage[DOMAIN_ID])
-    last = null
-    expectToBeSortedDescending items
+    expectToBeSortedDescending items, 'hitcount'
 
   describe 'findRecommendations', ->
 
@@ -119,6 +121,6 @@ describe 'Recommender', ->
 
     it 'returns the items in descending order', ->
       items = @recommender.recommendedItems(@storage[DOMAIN_ID][ITEM_ID], 1000)
-      expectToBeSortedDescending items
+      expectToBeSortedDescending items, 'count'
 
 

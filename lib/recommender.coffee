@@ -50,15 +50,14 @@ class Recommender
       popularItems = @findPopularItems(domainId, itemId, recommendations, limit)
       recommendations = recommendations.concat popularItems
 
-    _.map recommendations, (item) -> id: item
+    _.map recommendations, (item) -> id: item.id
 
   findPopularItems: (domainId, itemId, currentRecommendations, limit) ->
-    unwantedItems = currentRecommendations.slice(0)
+    unwantedItems = _.map currentRecommendations, (each) -> each.id
     unwantedItems.push itemId
     cleanedItems =  _.select @itemStorage[domainId], (item) ->
         unwantedItems.indexOf(item.id) == -1
     items = @sortItemsByHitCount(cleanedItems).slice(0, limit)
-    _.map items, (item) -> item.id
 
   sortItemsByHitCount: (items) ->
     # minus so we get a descending sort not an ascending
@@ -66,7 +65,6 @@ class Recommender
 
   recommendedItems: (item, limit) ->
     items = _.sortBy(item.recommends, (item) -> -item.count).slice(0, limit)
-    _.map items, (item) -> item.id
 
   ourId: -> @itemStorage.ourId ? DEFAULT_ID
 
