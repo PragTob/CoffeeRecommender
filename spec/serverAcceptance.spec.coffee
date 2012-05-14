@@ -85,8 +85,8 @@ describe 'Acceptance tests for server and recommendation engine', ->
         expect(responseObject.team.id).toEqual(OUR_TEAM_ID)
 
     it 'saves the category of an item appropriately', ->
-      helper.sendAndExpect string(testJSON()), (responseObject) -> # do nothing
-      expect(itemStorage[DOMAIN_ID][ITEM_ID].category).toEqual CATEGORY_ID
+      helper.send string(testJSON()), -> 
+        expect(itemStorage[DOMAIN_ID][ITEM_ID].category).toEqual CATEGORY_ID
 
   describe 'feedback messages', ->
   
@@ -95,11 +95,11 @@ describe 'Acceptance tests for server and recommendation engine', ->
       helper.sendAndExpect string(testJSON()), (responseObject) -> #nothing
       
     it 'increases the recommends attribute of the item appropriately', ->
-      helper.sendAndExpect string(feedbackJSON()), (response) ->
+      helper.send string(feedbackJSON()), ->
         expect(itemStorage[DOMAIN_ID][ITEM_ID].recommends[TARGET_ID].count).toEqual 1
         
     it 'sets the id of the item appropriately', ->
-      helper.sendAndExpect string(feedbackJSON()), (response) ->
+      helper.send string(feedbackJSON()), ->
         expect(itemStorage[DOMAIN_ID][ITEM_ID].recommends[TARGET_ID].id).toEqual TARGET_ID
-
+        
 runs -> helper.stopServer()
