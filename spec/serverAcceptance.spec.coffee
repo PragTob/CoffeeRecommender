@@ -1,9 +1,10 @@
 {Recommender} = require './../lib/recommender'
 {ItemStorage} = require './../lib/itemStorage'
 {ServerTester} = require './helper/serverTester'
+_ = require 'underscore'
 PORT = 4050
 
-ITEM_ID = '1'
+ITEM_ID = 1
 TEAM_ID = 1
 OUR_TEAM_ID = 48
 CATEGORY_ID = 77
@@ -11,6 +12,7 @@ DOMAIN_ID = 477
 VERSION = '1.0'
 RESULT_MESSAGE = 'result'
 TARGET_ID = 55
+LIMIT = 5
 
 feedbackJSON = ->
   msg: 'feedback'
@@ -22,7 +24,7 @@ feedbackJSON = ->
   config: { team: { id: '48' } }
   version: '1.0'
 
-testJSON = ->
+testJSON = (id = ITEM_ID)->
   msg:"impression"
   id:2
   client:
@@ -30,7 +32,7 @@ testJSON = ->
   domain:
     id: DOMAIN_ID
   item:
-    id: ITEM_ID
+    id: id
     title:"muuh"
     url:"google.de"
     created: 42
@@ -45,7 +47,7 @@ testJSON = ->
   		id: TEAM_ID
   	timeout:200.0
   	recommend:true
-  	limit:5
+  	limit:LIMIT
   version: VERSION
 
 jsonWithoutTeam = ->
@@ -85,21 +87,41 @@ describe 'Acceptance tests for server and recommendation engine', ->
         expect(responseObject.team.id).toEqual(OUR_TEAM_ID)
 
     it 'saves the category of an item appropriately', ->
-      helper.send string(testJSON()), -> 
+      helper.send string(testJSON()), ->
         expect(itemStorage[DOMAIN_ID][ITEM_ID].category).toEqual CATEGORY_ID
 
   describe 'feedback messages', ->
-  
+
     beforeEach ->
       # we need an item in our db
       helper.sendAndExpect string(testJSON()), (responseObject) -> #nothing
-      
+
     it 'increases the recommends attribute of the item appropriately', ->
       helper.send string(feedbackJSON()), ->
         expect(itemStorage[DOMAIN_ID][ITEM_ID].recommends[TARGET_ID].count).toEqual 1
-        
+
     it 'sets the id of the item appropriately', ->
       helper.send string(feedbackJSON()), ->
         expect(itemStorage[DOMAIN_ID][ITEM_ID].recommends[TARGET_ID].id).toEqual TARGET_ID
-        
+
+    it 'responds with the recommended item if the source item is requested', ->
+      helper.sendAndExpect string(testJSON()), (response) ->
+        expect(_.select(response.items, (item) -> item.id == TARGET_ID).length).toEqual 1
+
+  describe 'put on quite some load', ->
+
+    for i in [1..20]
+      helper.send string(testJSON(i)), -> #nothing
+
+    it 'responds with the amount of items specified in the limit parameter', ->
+      helper.sendAndExpect string(testJSON()), (response) ->
+        expect(response.items.length).toEqual LIMIT
+
+    it 'responds with a well formed array of item ids', ->
+      helper.sendAndExpect string(testJSON()), (response) ->
+        _.each response.items, (item) ->
+          # looks simple but checks for the existance of the id attribute and
+          # for the numericality of the ids
+          expect(item.id).toBeGreaterThan 0
+
 runs -> helper.stopServer()

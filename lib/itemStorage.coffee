@@ -8,6 +8,7 @@ class ItemStorage
 
   loadFromFile: (filePath) ->
     if path.existsSync filePath
+      console.log 'Loading storage from file'
       savedStorage = JSON.parse(fs.readFileSync filePath,'utf8')
       for key, value of savedStorage
         @[key] = value
