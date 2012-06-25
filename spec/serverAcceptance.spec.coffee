@@ -62,7 +62,7 @@ itemStorage = new ItemStorage
 recommender = new Recommender(itemStorage)
 helper = new ServerTester recommender, PORT
 
-describe 'Acceptance tests for server and recommendation engine', ->
+describe 'serverAcceptance tests specs', ->
 
   describe 'Impression test messages', ->
 

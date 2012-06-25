@@ -10,7 +10,7 @@ PORT = 2048
 helper = new ServerTester(new RecommenderMock, PORT)
 
 
-describe 'the server is able to handle basic requests', ->
+describe 'server is able to handle basic requests', ->
 
   it 'handles basic feedback requests', ->
     helper.sendAndExpectPassphrase(createTestMessage('feedback'), 'feedback test')
